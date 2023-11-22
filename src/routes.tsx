@@ -45,10 +45,7 @@ import Worklocations from "layouts/pages/worklocations";
 import Trialanderror from "layouts/pages/trialanderror";
 import Departments from "layouts/pages/departments";
 import Designations from "layouts/pages/designations";
-import Updatework from "layouts/pages/updatework";
-import Extrawork from "layouts/pages/extrawork";
-import Updatedes from "layouts/pages/updatedes";
-import Updatedep from "layouts/pages/updatedep";
+
 import General from "layouts/pages/general";
 import Emaileditor from "layouts/pages/emaileditor";
 import Workingdays from "layouts/pages/workingdays";
@@ -74,6 +71,10 @@ import Showholiday from "layouts/pages/holiday/showholiday";
 import Orgreport from "layouts/pages/organization_report/leave";
 import LTWreport from "layouts/pages/organization_report/leavetypesummary";
 import Dailyleave from "layouts/pages/organization_report/dailyleavestatus";
+import Manageloan from "layouts/pages/loan/loantype";
+import Viewrecord from "layouts/pages/loan/viewrecord";
+import Holiday from "layouts/pages/holiday/showholiday";
+import Showemp from "layouts/employees/showemp";
 const routes = [
   {
     type: "collapse",
@@ -176,6 +177,30 @@ const routes = [
         name: "INTERNSHIP",
         key: "intern",
         collapse: [
+          {
+            name: "Employee",
+            key: "showemp",
+            route: "/pages/intern/showemp",
+            component: <Showemp />,
+          },
+          {
+            name: "Holiday",
+            key: "holiday",
+            route: "/pages/intern/holiday",
+            component: <Holiday />,
+          },
+          {
+            name: "Loan",
+            key: "loan",
+            route: "/pages/intern/loan",
+            component: <Viewrecord />,
+          },
+          {
+            name: "Manage Loan",
+            key: "loantype",
+            route: "/pages/intern/loantype",
+            component: <Manageloan />,
+          },
           {
             name: "Daily Leave Status",
             key: "dlstatus",

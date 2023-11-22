@@ -2,33 +2,30 @@
 import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { Delete } from "@mui/icons-material";
+
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import MDBox from "components/MDBox";
 import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import MDInput from "components/MDInput";
-import { useFormik } from "formik";
-import * as yup from "yup";
+
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
+
 import Grid from "@mui/material/Grid";
 import { useEffect } from "react";
 import axios from "axios";
 import MDButton from "components/MDButton";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
 import Updatestatutory from "./updatestatutory";
 import MDTypography from "components/MDTypography";
-import Stack from "@mui/material/Stack";
-import DataTable from "examples/Tables/DataTable";
+
+import View from "./viewslab";
 
 const Professionaltax = () => {
   const [tasks, setTasks] = useState([]);
   const [editTaskData, setEditTaskData] = useState(null);
-
+  const [taxstate, setTaxstate] = useState("");
+  const handleState = (taxstate: React.SetStateAction<string>) => {
+    setTaxstate(taxstate);
+  };
   //for dialog box start
   const [openupdate, setOpenupdate] = useState(false);
   console.log(tasks, "tasking");
@@ -45,23 +42,23 @@ const Professionaltax = () => {
     setOpenupdate(false);
   };
   //end
-
+  // Fetch tasks on component mount --start
   const fetchTasks = async () => {
     try {
-      // const response = await axios.get("http://10.0.20.133:8001/worklocation", {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNjk3Nzc2NTMwLCJhZG1pbiI6dHJ1ZX0.PWQQOV6bj7uCVyqjG7NjGrZ0CR6GVGUivWOjmy9vCSk`,
-      //   },
-      // });
-      const pracdata = [{ location_name: "bangalore", state: "karnataka" }];
-      setTasks(pracdata);
+      const response = await axios.get("http://10.0.20.133:8000/professional_tax", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxMjMzNjYzfQ.CSwzxYBeBMoy4LoGQ3AO1LeagMFvHsxSaVX68HsjbSU`,
+        },
+      });
+
+      setTasks(() => response.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
   };
+  //end
 
-  // Fetch tasks on component mount
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -121,12 +118,10 @@ const Professionaltax = () => {
                 </Grid>
                 <Grid sm={6}>
                   <MDButton
-                    startIcon={<CreateRoundedIcon />}
+                    startIcon={<BorderColorIcon />}
                     onClick={() => handleOpenupdate(index)}
-                    size="medium"
+                    size="large"
                   />
-
-                  <MDButton startIcon={<Delete />} size="medium" />
                 </Grid>
               </Grid>
             </CardContent>
@@ -138,7 +133,9 @@ const Professionaltax = () => {
                   </MDTypography>
                 </Grid>
                 <Grid sm={6}>
-                  <MDTypography variant="span"></MDTypography>
+                  <MDTypography sx={{ fontSize: 14 }} ml={2} variant="span">
+                    {task.pt_number}
+                  </MDTypography>
                 </Grid>
               </Grid>
             </CardContent>
@@ -165,7 +162,7 @@ const Professionaltax = () => {
                 </Grid>
                 <Grid sm={6}>
                   <MDTypography sx={{ fontSize: 14, fontWeight: "bold" }} ml={2} variant="span">
-                    {"Monthly"}
+                    {task.deduction_cycle}
                   </MDTypography>
                 </Grid>
               </Grid>
@@ -182,7 +179,10 @@ const Professionaltax = () => {
                     sx={{ marginTop: -2, marginLeft: -1 }}
                     color="info"
                     variant="text"
-                    onClick={() => handleOpenpop()}
+                    onClick={() => {
+                      handleOpenpop();
+                      handleState(task.state);
+                    }}
                   >
                     View Tax Slabs
                   </MDButton>
@@ -191,32 +191,9 @@ const Professionaltax = () => {
             </CardContent>
 
             <Dialog open={openpop} onClose={handleClosepop}>
+              {/* <MDBox p={4}>Tax slabs for {task.location_name}</MDBox> */}
               <MDBox p={4}>
-                Tax slabs for {task.location_name}
-                <DataTable
-                  table={{
-                    columns: [
-                      {
-                        Header: "MONTHLY GROSS SALARY (₹)",
-                        accessor: "monthlysalary",
-                        width: "50%",
-                      },
-                      { Header: "MONTHLY TAX AMOUNT (₹)", accessor: "monthlyamount", width: "50%" },
-                    ],
-                    rows: [
-                      {
-                        monthlysalary: "1 - 24999",
-
-                        monthlyamount: "0",
-                      },
-                      {
-                        monthlysalary: "25000 - 999999999",
-
-                        monthlyamount: "200",
-                      },
-                    ],
-                  }}
-                />
+                <View stateToFind={taxstate} />
               </MDBox>
             </Dialog>
 

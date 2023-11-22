@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Addbreak from "./addbreak";
 import Updatebreak from "./updatebreak";
+import { useNavigate } from "react-router-dom";
 
 // break_name: "",
 // icon: "",
@@ -21,8 +22,18 @@ import Updatebreak from "./updatebreak";
 // breake_start_time: "",
 // break_end_time: "",
 // applicable_shifts: "",
+interface BreakData {
+  break_name: string;
+  icon: string;
+  pay_type: string;
+  mode: string;
+  break_start_time: string[];
+  break_end_time: string[];
+  shifts: any[]; // Adjust the type based on the actual type of 'shifts'
+}
 
 const Breakshift = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   //Start
   const [open, setOpen] = useState(false);
@@ -59,7 +70,7 @@ const Breakshift = () => {
         data: { break_name: break_name },
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNjk3Nzc2NTMwLCJhZG1pbiI6dHJ1ZX0.PWQQOV6bj7uCVyqjG7NjGrZ0CR6GVGUivWOjmy9vCSk`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwNzE2MTAxfQ.qGUKy1fkZx15cX_LGBkM1tj35t5YbkGqymbNfJiIiGg`,
         },
       });
       window.location.reload();
@@ -72,7 +83,7 @@ const Breakshift = () => {
       .get("http://10.0.20.133:8000/employee_shift_break", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNjk3Nzc2NTMwLCJhZG1pbiI6dHJ1ZX0.PWQQOV6bj7uCVyqjG7NjGrZ0CR6GVGUivWOjmy9vCSk`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwNzE2MTAxfQ.qGUKy1fkZx15cX_LGBkM1tj35t5YbkGqymbNfJiIiGg`,
         },
       })
       .then((response) => {
@@ -103,7 +114,7 @@ const Breakshift = () => {
           <IconButton
             onClick={() => {
               handleOpenupdate(index);
-              console.log(index);
+              console.log(index, "update index");
             }}
           >
             <CreateRoundedIcon />
@@ -113,12 +124,10 @@ const Breakshift = () => {
           </IconButton>
         </MDTypography>
       ),
-      allowed_duration: (
-        <MDTypography variant="p">{row.breake_start_time - row.end_start_time}</MDTypography>
-      ),
+      allowed_duration: <MDTypography variant="p"></MDTypography>,
       time: (
         <MDTypography variant="p">
-          {row.breake_start_time} to {row.end_start_time}
+          {row.breake_start_time} to {row.break_end_time}
         </MDTypography>
       ),
       pay_type: <MDTypography variant="p">{row.pay_type}</MDTypography>,
@@ -128,9 +137,13 @@ const Breakshift = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDTypography>Shift Details</MDTypography>
+      <MDTypography variant="h5">SHIFT DETAILS</MDTypography>
       <Grid sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <MDButton variant="contained" color="info" onClick={handleClickOpen}>
+        <MDButton
+          variant="outlined"
+          color="info"
+          onClick={() => navigate("/pages/intern/addbreak")}
+        >
           + Add Shift
         </MDButton>
         <Dialog open={open} onClose={handleClose} fullScreen>

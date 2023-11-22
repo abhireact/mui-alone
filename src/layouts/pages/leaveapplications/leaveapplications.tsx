@@ -78,7 +78,7 @@ const Applyleave = () => {
       .get("http://10.0.20.133:8000/apply_leave", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6ImRyYXNoYW5uYWlkdTAwNEBnbWFpbC5jb20iLCJleHAiOjE2OTU3OTYxOTEsImFkbWluIjp0cnVlfQ.VUB7apGKIoeWtooKBMqZfDinaM7Og26zWxcqYzSukeE"}`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNjk5OTU4NDcxfQ.Ak2T_beghsyFl-g3iuFoA9ne5ccPp0bd9vncnj6adCI`,
         },
       })
       .then((response) => {

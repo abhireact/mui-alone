@@ -41,11 +41,11 @@ const Updatedep = (props: any) => {
     validationSchema: validationSchema,
     onSubmit: (values, action) => {
       axios
-        .put("http://10.0.20.131:8000/department", {
+        .put("http://10.0.20.133:8000/department", {
           old_dept_name: task.dept_name,
-          new_dept_name: values.departmentname,
-          dept_code: values.departmentcode,
-          description: values.description,
+          new_dept_name: formik.values.departmentname,
+          dept_code: formik.values.departmentcode,
+          description: formik.values.description,
         })
         .then((response) => {
           console.log(response);

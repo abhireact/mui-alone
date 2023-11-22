@@ -40,7 +40,9 @@ function DataTables(): JSX.Element {
   const { t } = useTranslation("translation");
   const [data, setData] = useState([]);
 
-  const [open, setOpen] = useState(false); //for dialog box start
+  //for dialog box start
+
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -54,7 +56,7 @@ function DataTables(): JSX.Element {
       .get("http://10.0.20.133:8000/department", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNjk3Nzc2NTMwLCJhZG1pbiI6dHJ1ZX0.PWQQOV6bj7uCVyqjG7NjGrZ0CR6GVGUivWOjmy9vCSk`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjpudWxsLCJlbWFpbCI6Im9tQGdtYWlsLmNvbSIsImV4cCI6MTY5OTg2Njg4NX0.qZo6yboMJeGRuNZOmxsby3OTDNPEj7qcCHwtsKTvlYM`,
         },
       })
       .then((response) => {
@@ -133,20 +135,28 @@ function DataTables(): JSX.Element {
     validationSchema: validationSchema,
     onSubmit: (values, action) => {
       axios
-        .post("http://10.0.20.133:8000/department", {
-          dept_name: values.departmentname,
-          dept_code: values.departmentcode,
-          description: values.description,
-        })
+        .post(
+          "http://10.0.20.133:8000/department",
+          {
+            dept_name: values.departmentname,
+            dept_code: values.departmentcode,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjpudWxsLCJlbWFpbCI6Im9tQGdtYWlsLmNvbSIsImV4cCI6MTY5OTg2Njg4NX0.qZo6yboMJeGRuNZOmxsby3OTDNPEj7qcCHwtsKTvlYM`,
+            },
+          }
+        )
         .then((response) => {
           console.log(response);
+          handleClose();
         })
         .catch((error) => {
           console.log(error);
         });
 
       console.log(values);
-      action.resetForm();
     },
   });
 
@@ -229,12 +239,7 @@ function DataTables(): JSX.Element {
                       </Grid>
 
                       <Grid mt={3}>
-                        <Button
-                          color="info"
-                          variant="contained"
-                          type="submit"
-                          onClick={handleClose}
-                        >
+                        <Button color="info" variant="contained" type="submit">
                           Save
                         </Button>
                       </Grid>

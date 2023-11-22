@@ -58,17 +58,17 @@ const states = [
 ];
 interface AdditionalSlab {
   key: number;
-  start_range: string;
-  end_range: string;
-  monthly_tax_amount: string;
+  start_range: number;
+  end_range: number;
+  monthly_tax_amount: number;
 }
 
 // Define the initial value
 const initialSlab: AdditionalSlab = {
   key: Date.now(),
-  start_range: "0",
-  end_range: "0",
-  monthly_tax_amount: "0",
+  start_range: 1,
+  end_range: 24999,
+  monthly_tax_amount: 0,
 };
 const Updates = (props: any) => {
   const { openUpdate, setOpenupdate, task } = props;
@@ -92,9 +92,9 @@ const Updates = (props: any) => {
       ...prevSlabs,
       {
         key: Date.now(),
-        start_range: "0",
-        end_range: "0",
-        monthly_tax_amount: "0",
+        start_range: 0,
+        end_range: 0,
+        monthly_tax_amount: 0,
       },
     ]);
   };
@@ -121,11 +121,11 @@ const Updates = (props: any) => {
       pincode: task.pincode,
       city: task.city,
       org_name: task.org_name,
-      pt_number: "",
-      deduction_cycle: "Monthly",
-      start_range: "1",
-      end_range: "999999",
-      monthly_tax_amount: "0",
+      pt_number: task.pt_number,
+      deduction_cycle: task.deduction_cycle,
+      start_range: 0,
+      end_range: 0,
+      monthly_tax_amount: 0,
     },
     onSubmit: (values, action) => {
       //   console.log(values, "values");
@@ -136,7 +136,7 @@ const Updates = (props: any) => {
         monthly_tax_amount: slab.monthly_tax_amount,
       }));
       const requestData = {
-        work_location: values.name,
+        location_name: values.name,
         pt_number: values.pt_number,
         deduction_cycle: values.deduction_cycle,
         start_range: [...taxSlabsData.map((slab) => slab.start_range), values.start_range],
@@ -148,14 +148,15 @@ const Updates = (props: any) => {
       };
 
       axios
-        .post("http://10.0.20.133:8001/mg_professional_tax", requestData, {
+        .put("http://10.0.20.133:8000/professional_tax", requestData, {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxMjMzNjYzfQ.CSwzxYBeBMoy4LoGQ3AO1LeagMFvHsxSaVX68HsjbSU`,
           },
         })
         .then((response) => {
           console.log("it is working", response);
-          // window.location.reload();
+          //window.location.reload();
         })
         .catch((error) => {
           console.log("error is occurred", error);
@@ -273,7 +274,7 @@ const Updates = (props: any) => {
                         a
                         value={slab.end_range}
                         onChange={(e: { target: { value: any } }) =>
-                          handleAdditionalSlabChange(index, "end_range", e.target.value)
+                          handleAdditionalSlabChange(slab.key, "end_range", e.target.value)
                         }
                         sx={{ width: "80%" }}
                       />
@@ -283,7 +284,7 @@ const Updates = (props: any) => {
                         name={`monthly_tax_amount_${index}`}
                         value={slab.monthly_tax_amount}
                         onChange={(e: { target: { value: any } }) =>
-                          handleAdditionalSlabChange(index, "monthly_tax_amount", e.target.value)
+                          handleAdditionalSlabChange(slab.key, "monthly_tax_amount", e.target.value)
                         }
                         sx={{ width: "80%" }}
                       />

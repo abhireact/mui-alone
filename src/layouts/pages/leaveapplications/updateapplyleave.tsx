@@ -11,8 +11,8 @@ import * as yup from "yup";
 import { useState } from "react";
 
 const Updateleave = (props: any) => {
-  const { openUpdate, setOpenupdate, data } = props;
-  console.log(data, "data");
+  const { openUpdate, setOpenupdate, task } = props;
+  console.log(task, "task");
 
   const handleCloseupdate = () => {
     setOpenupdate(false);
@@ -20,7 +20,7 @@ const Updateleave = (props: any) => {
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
       employee_name: "",
-      leave_type: "",
+      leave_type: task.leave_type,
       team_email: "",
       from_date: "",
       to_date: "",

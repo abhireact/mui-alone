@@ -102,7 +102,7 @@ const Addshift = () => {
       .get("http://10.0.20.133:8000/shifts/tree_data", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNjk3NjI2NjE1LCJhZG1pbiI6dHJ1ZX0.S5YgIZ9WHKog0iseIra14kpa0HUDN9D4CbaC1xEtWvY"}`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwNzE2MTAxfQ.qGUKy1fkZx15cX_LGBkM1tj35t5YbkGqymbNfJiIiGg`,
         },
       })
       .then((response) => {

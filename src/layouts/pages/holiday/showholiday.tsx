@@ -13,8 +13,20 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Addholiday from "./addholiday";
 import Updateholiday from "./updateholiday";
+function transformString(inputString: string): string {
+  // Split the input string into an array of substrings
+  const substrings = inputString.split("-");
 
-const Breakshift = () => {
+  // Reverse the array of substrings
+  const reversedArray = substrings.reverse();
+
+  // Join the reversed array into a string using '-' as the separator
+  const resultString = reversedArray.join("/");
+
+  return resultString;
+}
+
+const Holiday = () => {
   const [data, setData] = useState([]);
   //Start
   const [open, setOpen] = useState(false);
@@ -46,15 +58,18 @@ const Breakshift = () => {
   const handleDeleteData = async (row: any) => {
     console.log(row, "Delete Data");
     try {
-      await axios.delete("http://10.0.20.133:8000/holiday", {
+      const deletedata = await axios.delete("http://10.0.20.133:8000/holiday", {
         data: {
           ...row,
         },
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6Im9tQGdtYWlsLmNvbSIsImV4cCI6MTY5ODkwNzM3OH0.GQ5mWSBpvJ8X4clfL-kiarDgc1mYOw8QewSrL3ZYBZg`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMjE0MDcyfQ.WP23DM78RR5uyY4E5hupWFvjNyZZqT2NpGj9kpTBucA`,
         },
       });
+      if (deletedata) {
+        return window.location.reload();
+      }
     } catch (error) {
       console.error("Error deleting task:", error);
     }
@@ -64,7 +79,7 @@ const Breakshift = () => {
       .get("http://10.0.20.133:8000/holiday", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6Im9tQGdtYWlsLmNvbSIsImV4cCI6MTY5ODkwNzM3OH0.GQ5mWSBpvJ8X4clfL-kiarDgc1mYOw8QewSrL3ZYBZg`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMjE0MDcyfQ.WP23DM78RR5uyY4E5hupWFvjNyZZqT2NpGj9kpTBucA`,
         },
       })
       .then((response) => {
@@ -107,7 +122,7 @@ const Breakshift = () => {
       ),
       date: (
         <MDTypography variant="p">
-          {row.from_date} to {row.to_date}
+          {transformString(row.from_date)} to {transformString(row.to_date)}
         </MDTypography>
       ),
 
@@ -122,10 +137,10 @@ const Breakshift = () => {
         <MDButton variant="contained" color="info" onClick={handleClickOpen}>
           + Add
         </MDButton>
-        <Dialog open={open} onClose={handleClose} fullScreen>
+        <Dialog open={open} onClose={handleClose}>
           <Addholiday setOpen={setOpen} />
         </Dialog>
-        <Dialog open={openupdate} onClose={handleCloseupdate} fullScreen>
+        <Dialog open={openupdate} onClose={handleCloseupdate}>
           <Updateholiday setOpenupdate={setOpenupdate} editData={editData} />
         </Dialog>
       </Grid>
@@ -134,4 +149,4 @@ const Breakshift = () => {
   );
 };
 
-export default Breakshift;
+export default Holiday;
