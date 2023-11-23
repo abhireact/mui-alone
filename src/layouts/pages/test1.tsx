@@ -94,7 +94,6 @@ const Updates = () => {
     monthly_tax_amount: [0, 1],
   };
   console.log("data ", task);
-  const desiredState = "Karnataka";
 
   // Create initialSlab based on the matchingState or use an empty array
   const initialSlab: AdditionalSlab[] = data.start_range.map((start, index) => ({
@@ -194,74 +193,6 @@ const Updates = () => {
       <form onSubmit={formik.handleSubmit}>
         <MDBox p={4}>
           <Grid container spacing={2}>
-            <Grid sm={12} mb={2}>
-              <MDInput
-                sx={{ width: "80%" }}
-                // id="email"
-                variant="standard"
-                name="name"
-                label="Work Location"
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                helperText={formik.touched.name && formik.errors.name}
-                mb={10}
-                mt={10}
-              />
-            </Grid>
-            <Grid sm={12}>
-              <Autocomplete
-                sx={{ width: "80%" }}
-                defaultValue={task.state}
-                onChange={(event, value) => {
-                  formik.handleChange({
-                    target: { name: "state", value },
-                  });
-                }}
-                options={states}
-                renderInput={(params) => (
-                  <FormField
-                    label="States"
-                    InputLabelProps={{ shrink: true }}
-                    name="state"
-                    onChange={formik.handleChange}
-                    value={formik.values.state}
-                    {...params}
-                    variant="outlined"
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid sm={6}>
-              <MDInput
-                sx={{ width: "80%" }}
-                // id="email"
-                variant="standard"
-                name="pt_number"
-                label="PT Number"
-                value={formik.values.pt_number}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.pt_number && Boolean(formik.errors.pt_number)}
-                helperText={formik.touched.pt_number && formik.errors.pt_number}
-              />
-            </Grid>
-
-            <Grid sm={6}>
-              <MDInput
-                sx={{ width: "80%" }}
-                variant="standard"
-                name="deduction_cycle"
-                label="Deduction Cycle"
-                value={formik.values.deduction_cycle}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.deduction_cycle && Boolean(formik.errors.deduction_cycle)}
-                helperText={formik.touched.deduction_cycle && formik.errors.deduction_cycle}
-              />
-            </Grid>
             <Grid sm={12}>
               <MDTypography sx={{ fontSize: 14 }} variant="span">
                 Taxes slabs based on
@@ -324,17 +255,6 @@ const Updates = () => {
                   + Additional Slabs
                 </MDButton>
               </Grid>
-            </Grid>
-
-            <Grid mt={3}>
-              <Button color="info" variant="contained" type="submit">
-                Save
-              </Button>
-            </Grid>
-            <Grid ml={2} mt={3}>
-              <Button color="primary" variant="contained">
-                Cancel
-              </Button>
             </Grid>
           </Grid>
         </MDBox>
