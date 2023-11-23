@@ -63,15 +63,29 @@ interface AdditionalSlab {
   monthly_tax_amount: number;
 }
 
-// Define the initial value
-const initialSlab: AdditionalSlab = {
-  key: Date.now(),
-  start_range: 1,
-  end_range: 24999,
-  monthly_tax_amount: 0,
-};
+interface DataItem {
+  location_name: string;
+  state: string;
+  pt_number: string;
+  deduction_cycle: string;
+  start_range: number[];
+  end_range: number[];
+  monthly_tax_amount: number[];
+}
+
 const Updates = (props: any) => {
   const { openUpdate, setOpenupdate, task } = props;
+  console.log("data ", task);
+
+  // Create initialSlab based on the matchingState or use an empty array
+  const initialSlab: AdditionalSlab[] = task.start_range.map((start: any, index: any) => ({
+    key: Date.now(),
+    start_range: start,
+    end_range: task.end_range[index],
+    monthly_tax_amount: task.monthly_tax_amount[index],
+  }));
+
+  console.log(initialSlab);
   const removeTaxSlab = (index: number) => {
     if (additionalSlabs.length > 1) {
       const updatedSlabs = [...additionalSlabs];
@@ -84,7 +98,7 @@ const Updates = (props: any) => {
   const handleCloseupdate = () => {
     setOpenupdate(false);
   };
-  const [additionalSlabs, setAdditionalSlabs] = useState<AdditionalSlab[]>([initialSlab]);
+  const [additionalSlabs, setAdditionalSlabs] = useState<AdditionalSlab[]>(initialSlab);
 
   // Function to add a new set of tax slabs
   const addTaxSlab = () => {
@@ -115,17 +129,11 @@ const Updates = (props: any) => {
   const formik = useFormik({
     initialValues: {
       name: task.location_name,
-      address_line1: task.add_line1,
-      address_line2: task.add_line2,
+
       state: task.state,
-      pincode: task.pincode,
-      city: task.city,
-      org_name: task.org_name,
+
       pt_number: task.pt_number,
       deduction_cycle: task.deduction_cycle,
-      start_range: 0,
-      end_range: 0,
-      monthly_tax_amount: 0,
     },
     onSubmit: (values, action) => {
       //   console.log(values, "values");
@@ -139,12 +147,9 @@ const Updates = (props: any) => {
         location_name: values.name,
         pt_number: values.pt_number,
         deduction_cycle: values.deduction_cycle,
-        start_range: [...taxSlabsData.map((slab) => slab.start_range), values.start_range],
-        end_range: [...taxSlabsData.map((slab) => slab.end_range), values.end_range],
-        monthly_tax_amount: [
-          ...taxSlabsData.map((slab) => slab.monthly_tax_amount),
-          values.monthly_tax_amount,
-        ],
+        start_range: [...taxSlabsData.map((slab) => slab.start_range)],
+        end_range: [...taxSlabsData.map((slab) => slab.end_range)],
+        monthly_tax_amount: [...taxSlabsData.map((slab) => slab.monthly_tax_amount)],
       };
 
       axios
