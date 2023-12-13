@@ -31,7 +31,7 @@ const tdStyle: React.CSSProperties = {
 };
 
 const DataTable: React.FC<DataTableProps> = ({ data, stateToFind }) => {
-  const matchingState = data.find((item) => item.state === stateToFind);
+  const matchingState = data.find((item) => item.state === stateToFind); // changes based on location
 
   if (!matchingState) {
     return <p>{`State '${stateToFind}' not found in the data.`}</p>;
@@ -88,7 +88,7 @@ const View: React.FC<ViewProps> = ({ stateToFind }) => {
       const response = await axios.get("http://10.0.20.133:8000/professional_tax/view_slabs", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxMjMzNjYzfQ.CSwzxYBeBMoy4LoGQ3AO1LeagMFvHsxSaVX68HsjbSU`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxNjYzNTg2fQ._sBeTWEcHjk9vtraOdxaQ1WgZbUsbGEgdEOEHh_1iMc`,
         },
       });
 

@@ -50,7 +50,7 @@ import General from "layouts/pages/general";
 import Emaileditor from "layouts/pages/emaileditor";
 import Workingdays from "layouts/pages/workingdays";
 import Compensatoryrequest from "layouts/pages/compensatoryrequest";
-import Statutory from "layouts/pages/statutory";
+import Statutory from "layouts/pages/professional_tax/statutory";
 import Editemployee from "layouts/pages/editemployee";
 import Orgtree from "layouts/pages/orgtree";
 import Newhires from "layouts/pages/newhires";
@@ -75,6 +75,8 @@ import Manageloan from "layouts/pages/loan/loantype";
 import Viewrecord from "layouts/pages/loan/viewrecord";
 import Holiday from "layouts/pages/holiday/showholiday";
 import Showemp from "layouts/employees/showemp";
+import Showrole from "layouts/pages/roles_crud/show_role";
+import Form from "layouts/pages/form16/form";
 const routes = [
   {
     type: "collapse",
@@ -177,6 +179,18 @@ const routes = [
         name: "INTERNSHIP",
         key: "intern",
         collapse: [
+          {
+            name: "Form16",
+            key: "form16",
+            route: "/pages/intern/form16",
+            component: <Form />,
+          },
+          {
+            name: "Role",
+            key: "showrole",
+            route: "/pages/intern/showrole",
+            component: <Showrole />,
+          },
           {
             name: "Employee",
             key: "showemp",

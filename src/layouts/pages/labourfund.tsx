@@ -12,7 +12,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import MDAvatar from "components/MDAvatar";
 import WarningIcon from "@mui/icons-material/Warning";
-
+import { useFormik } from "formik";
+import axios from "axios";
 // Karnataka
 // Employees' Contribution
 // ₹ 20.00
@@ -48,6 +49,26 @@ const Labourfund = () => {
   const handleOpenpop = () => {
     setOpenpop(true);
   };
+  const { values, touched, errors, handleChange, handleBlur, handleSubmit } = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+      start_date: "",
+      end_date: "",
+    },
+    // validationSchema: validationSchema,
+    onSubmit: (values, action) => {
+      const sendData = {};
+      axios.post("", sendData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMjE0MDcyfQ.WP23DM78RR5uyY4E5hupWFvjNyZZqT2NpGj9kpTBucA`,
+        },
+      });
+
+      action.resetForm();
+    },
+  });
 
   return (
     <DashboardLayout>

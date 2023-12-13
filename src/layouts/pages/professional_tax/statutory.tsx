@@ -48,7 +48,7 @@ const Professionaltax = () => {
       const response = await axios.get("http://10.0.20.133:8000/professional_tax", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxMjMzNjYzfQ.CSwzxYBeBMoy4LoGQ3AO1LeagMFvHsxSaVX68HsjbSU`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxNjYzNTg2fQ._sBeTWEcHjk9vtraOdxaQ1WgZbUsbGEgdEOEHh_1iMc`,
         },
       });
 
@@ -191,7 +191,6 @@ const Professionaltax = () => {
             </CardContent>
 
             <Dialog open={openpop} onClose={handleClosepop}>
-              {/* <MDBox p={4}>Tax slabs for {task.location_name}</MDBox> */}
               <MDBox p={4}>
                 <View stateToFind={taxstate} />
               </MDBox>

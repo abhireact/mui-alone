@@ -79,7 +79,7 @@ const Updates = (props: any) => {
 
   // Create initialSlab based on the matchingState or use an empty array
   const initialSlab: AdditionalSlab[] = task.start_range.map((start: any, index: any) => ({
-    key: Date.now(),
+    key: Math.random(),
     start_range: start,
     end_range: task.end_range[index],
     monthly_tax_amount: task.monthly_tax_amount[index],
@@ -156,7 +156,7 @@ const Updates = (props: any) => {
         .put("http://10.0.20.133:8000/professional_tax", requestData, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxMjMzNjYzfQ.CSwzxYBeBMoy4LoGQ3AO1LeagMFvHsxSaVX68HsjbSU`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxNjYzNTg2fQ._sBeTWEcHjk9vtraOdxaQ1WgZbUsbGEgdEOEHh_1iMc`,
           },
         })
         .then((response) => {

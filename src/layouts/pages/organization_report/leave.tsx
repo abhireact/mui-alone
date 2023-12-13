@@ -142,7 +142,7 @@ const EmployeeTable = () => {
                   {totalSums[employeeIndex]} {/* Display the total sum for this employee */}
                 </td>
               </tr>
-            ))}{" "}
+            ))}
           </tbody>
         </table>
       </div>

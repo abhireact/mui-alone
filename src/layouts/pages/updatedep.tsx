@@ -25,7 +25,7 @@ const validationSchema = yup.object({
 });
 
 const Updatedep = (props: any) => {
-  const { openUpdate, setOpenupdate, task } = props;
+  const { openupdate, setOpenupdate, task } = props;
   console.log(task, "task");
   const handleCloseupdate = () => {
     setOpenupdate(false);
