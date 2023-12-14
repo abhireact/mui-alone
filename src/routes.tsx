@@ -76,7 +76,7 @@ import Viewrecord from "layouts/pages/loan/viewrecord";
 import Holiday from "layouts/pages/holiday/showholiday";
 import Showemp from "layouts/employees/showemp";
 import Showrole from "layouts/pages/roles_crud/show_role";
-import Form from "layouts/pages/form16/form";
+import Form from "layouts/pages/form16/form16";
 const routes = [
   {
     type: "collapse",

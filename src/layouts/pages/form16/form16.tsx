@@ -9,7 +9,25 @@ import CardContent from "@mui/material/CardContent";
 import Avatar from "components/MDAvatar";
 import IconButton from "@mui/material/IconButton";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+import { useEffect, useState } from "react";
+import axios from "axios";
 const Form = () => {
+  const [data, setData] = useState({});
+  useEffect(() => {
+    axios
+      .get("", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAyOTgwOTc5fQ.dy21_oSwrreB3J0z2J7Kvw3oIcP216jFAqSxWUsG-5s`,
+        },
+      })
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
   return (
     <DashboardLayout>
       <DashboardNavbar />
