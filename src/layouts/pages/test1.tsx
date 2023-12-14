@@ -72,7 +72,7 @@ const Employeesm = () => {
     <DashboardLayout>
       <DashboardNavbar />
 
-      <Dialog open={openupdate} onClose={handleCloseupdate} fullScreen>
+      <Dialog open={openupdate} onClose={handleCloseupdate}>
         <Pdfdown setOpenupdate={setOpenupdate} emaildata={emaildata} />
       </Dialog>
       <DataTable table={dataTableData} />
