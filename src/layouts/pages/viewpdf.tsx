@@ -10,7 +10,7 @@ const Formtable = () => {
   const tableStyle: React.CSSProperties = {
     borderCollapse: "collapse",
     margin: "auto",
-    width: "70%",
+    width: "100%",
   };
 
   const tdStyle: React.CSSProperties = {
@@ -519,8 +519,8 @@ const DownloadButton = () => {
 
   return (
     <>
-      <MDButton onClick={downloadPDF} color="info" variant="outlined">
-        Download As PDF
+      <MDButton onClick={downloadPDF} color="info" variant="contained">
+        Download
       </MDButton>
     </>
   );
@@ -589,7 +589,7 @@ const Pdfdown = (props: any) => {
   const tableStyle: React.CSSProperties = {
     borderCollapse: "collapse",
     margin: "auto",
-    width: "80%",
+    width: "100%",
   };
 
   const tdStyle: React.CSSProperties = {
@@ -613,7 +613,7 @@ const Pdfdown = (props: any) => {
   return (
     <>
       <div>
-        <Grid sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
           <MDButton
             color="primary"
             variant="outlined"
@@ -623,6 +623,7 @@ const Pdfdown = (props: any) => {
           >
             &lt;-BACK
           </MDButton>
+          <DownloadButton />
         </Grid>
       </div>
 
@@ -1102,7 +1103,6 @@ const Pdfdown = (props: any) => {
           </tbody>
         </table>
       </div>
-      <DownloadButton />
     </>
   );
 };
