@@ -1,21 +1,21 @@
 import React from "react";
 import jsPDF from "jspdf";
 import MDButton from "components/MDButton";
+import MDBox from "components/MDBox";
 import Grid from "@mui/material/Grid";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { message } from "antd";
 
 const DownloadButton = () => {
   const downloadPDF = async () => {
     const content = document.getElementById("content");
 
-    // Get content width
-
-    const contentWidth = content.offsetWidth;
+    // const contentWidth = content.offsetWidth; Set content width
 
     // Create jsPDF instance with custom width
 
-    const doc = new jsPDF("p", "pt", [755, 1000]);
+    const doc = new jsPDF("p", "pt", [722, 1000]);
 
     const padding = 23;
 
@@ -53,7 +53,7 @@ const DownloadButton = () => {
 
     // Save the PDF
 
-    doc.save(`pdfpage.pdf`);
+    doc.save(`form16b.pdf`);
   };
 
   return (
@@ -103,6 +103,9 @@ const Pdfdown = (props: any) => {
     tax_payable: 0,
     net_tax_payable: 0,
   });
+  const handleCloseupdate = () => {
+    setOpenupdate(false);
+  };
   useEffect(() => {
     axios
       .post(
@@ -146,13 +149,10 @@ const Pdfdown = (props: any) => {
     fontWeight: "bold",
   };
 
-  const handleCloseupdate = () => {
-    setOpenupdate(false);
-  };
   return (
-    <>
+    <MDBox m={2}>
       <div>
-        <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Grid sx={{ display: "flex", justifyContent: "space-between" }} mb={2}>
           <MDButton
             color="primary"
             variant="outlined"
@@ -642,7 +642,7 @@ const Pdfdown = (props: any) => {
           </tbody>
         </table>
       </div>
-    </>
+    </MDBox>
   );
 };
 
