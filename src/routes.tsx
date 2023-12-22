@@ -39,7 +39,7 @@ import profilePicture from "assets/images/team-3.jpg";
 
 import Testing_page from "layouts/pages/test";
 import Test1 from "layouts/pages/test1";
-import Logintest from "layouts/pages/logintest";
+import Login from "layouts/pages/login";
 import Orgprofile from "layouts/pages/orgprofile";
 import Worklocations from "layouts/pages/worklocations";
 import Trialanderror from "layouts/pages/trialanderror";
@@ -410,7 +410,7 @@ const routes = [
             name: "Logintest",
             key: "logintest",
             route: "/pages/practice/logintest",
-            component: <Logintest />,
+            component: <Login />,
           },
         ],
       },

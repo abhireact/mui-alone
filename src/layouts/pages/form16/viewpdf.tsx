@@ -136,7 +136,7 @@ const Pdfdown = (props: any) => {
 
   const tdStyle: React.CSSProperties = {
     border: "1px solid #151516",
-    textAlign: "center",
+    textAlign: "left",
     padding: "8px",
     fontSize: "14px",
   };

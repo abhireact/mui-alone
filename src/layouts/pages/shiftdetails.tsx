@@ -11,12 +11,12 @@ import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState, useEffect } from "react";
 import axios from "axios";
+
 import Addshift from "./addshift";
 import Updateshift from "./updateshift";
 
 const shiftdetails = () => {
   const [data, setData] = useState([]);
-
   //Update Dialog Box Start
   const [editData, setEditData] = useState(null);
   const [openupdate, setOpenupdate] = useState(false);
@@ -38,7 +38,6 @@ const shiftdetails = () => {
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };

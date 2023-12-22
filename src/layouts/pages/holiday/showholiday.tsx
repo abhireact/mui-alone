@@ -1,6 +1,5 @@
 import DataTable from "examples/Tables/DataTable";
 import MDTypography from "components/MDTypography";
-
 import Dialog from "@mui/material/Dialog";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";

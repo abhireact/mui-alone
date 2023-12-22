@@ -1,14 +1,14 @@
 import MDInput from "components/MDInput";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import Button from "components/MDButton";
 import axios from "axios";
 import Card from "@mui/material/Card";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import Cookies from "js-cookie";
-
+import MDButton from "components/MDButton";
+import Grid from "@mui/material/Grid";
 const validationSchema = yup.object({
   username: yup.string().min(2).max(25).required("Please enter your name"),
 
@@ -58,13 +58,12 @@ const Logintest = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <Card>
+      <Card sx={{ width: "50%" }}>
         <form onSubmit={formik.handleSubmit}>
           <MDBox p={4}>
             <div>
               <MDInput
-                sx={{ width: 500 }}
-                // id="email"
+                sx={{ width: "50%" }}
                 variant="standard"
                 name="username"
                 label="Username"
@@ -79,7 +78,7 @@ const Logintest = () => {
             </div>
             <div>
               <MDInput
-                sx={{ width: 500 }}
+                sx={{ width: "50%" }}
                 // id="confirmpassword"
                 variant="standard"
                 name="password"
@@ -93,10 +92,11 @@ const Logintest = () => {
                 mb={10}
               />
             </div>
-
-            <Button color="primary" variant="contained" type="submit">
-              Submit
-            </Button>
+            <Grid m={4} sx={{ fontColor: "blue" }}>
+              <MDButton color="primary" variant="contained" type="submit">
+                Submit
+              </MDButton>
+            </Grid>
           </MDBox>
         </form>
       </Card>
