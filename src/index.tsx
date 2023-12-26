@@ -26,7 +26,6 @@ import englishlang from "./translations/en/language.json";
 import translatehindi from "./translations/hindi/language.json";
 
 i18next.init({
-  lng: "eng",
   resources: {
     en: {
       translation: englishlang,
@@ -39,7 +38,7 @@ i18next.init({
       translation: translatehindi,
     },
   },
-  fallbackLng: "en",
+  fallbackLng: "en", //default value
 
   interpolation: {
     escapeValue: false,

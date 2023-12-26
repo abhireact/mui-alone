@@ -3,13 +3,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import axios from "axios";
 import FormField from "layouts/ecommerce/products/new-product/components/FormField";
 import MDTypography from "components/MDTypography";
-import Card from "@mui/material/Card";
-import MDInput from "components/MDInput";
-import MDBox from "components/MDBox";
-import Grid from "@mui/material/Grid";
-import MDButton from "components/MDButton";
-import { useFormik } from "formik";
-import * as yup from "yup";
+
 import DataTable from "examples/Tables/DataTable";
 import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";

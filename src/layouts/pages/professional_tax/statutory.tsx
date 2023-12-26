@@ -18,6 +18,8 @@ import Updatestatutory from "./updatestatutory";
 import MDTypography from "components/MDTypography";
 
 import View from "./viewslab";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 const Professionaltax = () => {
   const [tasks, setTasks] = useState([]);
@@ -48,7 +50,7 @@ const Professionaltax = () => {
       const response = await axios.get("http://10.0.20.133:8000/professional_tax", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxNjYzNTg2fQ._sBeTWEcHjk9vtraOdxaQ1WgZbUsbGEgdEOEHh_1iMc`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

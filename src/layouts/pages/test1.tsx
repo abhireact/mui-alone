@@ -1,358 +1,150 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import StepLabel from "@mui/material/StepLabel";
-import MDBox from "components/MDBox";
-import MDInput from "components/MDInput";
-import FormField from "layouts/applications/wizard/components/FormField";
-import Checkbox from "@mui/material/Checkbox";
-import Box from "@mui/material/Box";
-// import "./weekday.css";
-// import Datedes from "./date";
-import dayjs from "dayjs";
-import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-
-import {
-  TextField,
-  Autocomplete,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  Card,
-  Grid,
-  //   Checkbox,
-  Divider,
-} from "@mui/material";
-import { Field, useFormik } from "formik";
-import MDTypography from "components/MDTypography";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 import MDButton from "components/MDButton";
-import React from "react";
-import axios from "axios";
+import MDBox from "components/MDBox";
+import Divider from "@mui/material/Divider";
+import CloseIcon from "@mui/icons-material/Close";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AddIcon from "@mui/icons-material/Add";
 import Cookies from "js-cookie";
-import * as yup from "yup";
-import validationSchema from "./org_tax_schema";
+import axios from "axios";
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+import MDTypography from "components/MDTypography";
+import MDInput from "components/MDInput";
 
 const token = Cookies.get("token");
 
-let initialValues = {
-  pan_name: "",
-  tan_name: "",
-  tds_orao_code: "",
-  tax_payment_frequency: "",
-  deductor_name: "",
-  deductor_type: "",
-  deductor_father_name: "",
-  deductor_designation: "",
-};
-
-function Taxes() {
-  const [savedata, setSaveData] = useState("create");
-  const [pannumber, setPannumber] = useState("");
-  const [employees, setEmployees] = useState([]);
-  const [employee, setEmployee] = useState();
-
+const Test = () => {
+  const [data, setData] = useState([{ earning_type_name: "" }]);
+  const [hiddenElements, setHiddenElements] = useState([]);
+  const handleCancelClick = (cancelledElement: any) => {
+    const updatedHiddenElements = hiddenElements.filter((element) => element !== cancelledElement);
+    setHiddenElements(updatedHiddenElements);
+    console.log(hiddenElements, "hidden elements");
+  };
+  const [ann, setAnn] = useState();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://10.0.20.133:8000/mg_taxes", {
+        const response = await axios.get("http://10.0.20.133:8000/mg_earning_type", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
         if (response.status === 200) {
+          setData(response.data);
           console.log(response.data);
-          initialValues = response.data[0];
-          setSaveData("edit");
-          setPannumber(response.data[0].pan_name);
-          setEmployee(response.data[0].deductor_name);
         }
       } catch (error) {
-        // console.error(error);
         console.log("Data not found");
       }
     };
     fetchData();
-    const fetchEmp = async () => {
-      await axios
-        .get("http://10.0.20.133:8000/employee", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log(response.data, "data");
-          const data = response.data;
-          let namesArray: string[] = [];
-          data.forEach((emp: any) => {
-            let fullName = "";
-
-            if (emp.first_name) {
-              fullName += emp.first_name;
-            }
-
-            if (emp.last_name) {
-              fullName += " " + emp.last_name;
-            }
-
-            namesArray.push(fullName.trim());
-          });
-          setEmployees(namesArray);
-
-          if (response.status === 404) {
-            console.error("No Data Available");
-          }
-        });
-    };
-    fetchEmp();
   }, []);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
-    useFormik({
-      initialValues,
-      validationSchema: validationSchema,
-      enableReinitialize: true,
-      onSubmit: async (values, action) => {
-        if (savedata === "create") {
-          handleFormSubmit();
-        } else {
-          handleFormEditSubmit();
-        }
-      },
-    });
-  //   console.log(values, calculationtype, date, endDate);
-  const handleFormSubmit = async () => {
-    console.log({ ...values }, "submit values");
-    try {
-      let sendData = values;
-
-      const response = await axios.post("http://10.0.20.133:8000/mg_taxes", sendData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 200) {
-        console.log("Employee Created Successfully");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const handleFormEditSubmit = async () => {
-    try {
-      let sendData = values;
-
-      const response = await axios.put(
-        `http://10.0.20.133:8000/mg_taxes/?pan_name=${pannumber}`,
-        sendData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        console.log("Employee Edit Successfully");
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const handleClickOpen = (hello: any) => {
+    setHiddenElements([...hiddenElements, hello]);
+    console.log(hiddenElements, "it is working");
   };
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <form onSubmit={handleSubmit}>
-        <Card sx={{ width: "80%", margin: "auto", mt: "2%" }}>
-          <MDBox px={3} pt={3}>
-            <Grid item xs={12} sm={9} mb={2}>
-              <MDTypography variant="h5">Organisation Tax Details</MDTypography>
-            </Grid>
-            <Grid container spacing={2} p={1}>
-              <Grid item xs={12} sm={6}>
-                <FormField
-                  type="payslipname"
-                  label="PAN*"
-                  name="pan_name"
-                  value={values.pan_name}
-                  placeholder="Enter PAN Number"
-                  variant="standard"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.pan_name && Boolean(errors.pan_name)}
-                  helperText={touched.pan_name && errors.pan_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormField
-                  type="payslipname"
-                  label="TAN"
-                  name="tan_name"
-                  value={values.tan_name}
-                  placeholder="Enter TAN Number"
-                  variant="standard"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.tan_name && Boolean(errors.tan_name)}
-                  helperText={touched.tan_name && errors.tan_name}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} p={1}>
-              <Grid item xs={12} sm={6}>
-                <FormField
-                  type="payslipname"
-                  label="TDS circle / AO code "
-                  name="tds_orao_code"
-                  value={values.tds_orao_code}
-                  placeholder="Enter TDS circle / AO code"
-                  variant="standard"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.tds_orao_code && Boolean(errors.tds_orao_code)}
-                  helperText={touched.tds_orao_code && errors.tds_orao_code}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormField
-                  type="payslipname"
-                  label="Tax Payment Frequency"
-                  name="tax_payment_frequency"
-                  value={values.tax_payment_frequency}
-                  placeholder="Enter TAN Tax Payment Frequency"
-                  variant="standard"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.tax_payment_frequency && Boolean(errors.tax_payment_frequency)}
-                  helperText={touched.tax_payment_frequency && errors.tax_payment_frequency}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={3} p={1}>
-              <Grid item xs={12} sm={12}>
-                <MDTypography variant="h6">Tax Deductor Details</MDTypography>
-                {/* <br /> */}
-
-                <RadioGroup
-                  row
-                  value={values.deductor_type || "Employee"}
-                  name="deductor_type"
-                  onChange={handleChange}
+      <Grid container spacing={2}>
+        <Grid item sm={3}>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>Earning</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {data.map((info, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: hiddenElements.includes(info) ? "none" : "block",
+                  }}
                 >
-                  <FormControlLabel
-                    control={<></>}
-                    label={
-                      <MDTypography variant="button" sx={{ fontWeight: "bold" }} p={2}>
-                        Deductor&apos;s Type*
-                      </MDTypography>
-                    }
-                  />
-                  <FormControlLabel
-                    value="Employee"
-                    control={<Radio />}
-                    label={<MDTypography variant="button">Employee</MDTypography>}
-                  />
-                  <FormControlLabel
-                    value="Non-Employee"
-                    control={<Radio />}
-                    label={<MDTypography variant="button">Non-Employee</MDTypography>}
-                  />
-                </RadioGroup>
+                  <Typography variant="caption">
+                    {info?.earning_type_name}
+                    <MDButton color="info" variant="text" onClick={() => handleClickOpen(info)}>
+                      <AddIcon />
+                    </MDButton>
+                  </Typography>
+                </div>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+
+        <Grid item sm={9}>
+          <Card>
+            <Grid container>
+              <Grid item sm={2.5}>
+                <MDTypography variant="subtitle2" p={2}>
+                  SALARY COMPONENTS
+                </MDTypography>
+              </Grid>
+              <Grid item sm={2.5}>
+                <MDTypography variant="subtitle2" p={2}>
+                  CALCULATION TYPE
+                </MDTypography>
+              </Grid>
+              <Grid item sm={2.5}>
+                <MDTypography variant="subtitle2" p={2}>
+                  MONTHLY AMOUNT
+                </MDTypography>
+              </Grid>
+              <Grid item sm={2.5}>
+                <MDTypography variant="subtitle2" p={2}>
+                  ANNUAL AMOUNT
+                </MDTypography>
               </Grid>
             </Grid>
-            <Grid container spacing={3} p={1}>
-              <Grid item xs={12} sm={6}>
-                {values.deductor_type === "Employee" ? (
-                  <Autocomplete
-                    onChange={(event, value) => {
-                      handleChange({ target: { name: "deductor_name", value } });
-                    }}
-                    options={employees}
-                    defaultValue={employee}
-                    renderInput={(params) => (
-                      <MDInput
-                        required
-                        name="deductor_name
-                      "
-                        onChange={handleChange}
-                        value={values.deductor_name}
-                        label="Deductor's Name
-                      "
-                        {...params}
-                        variant="standard"
-                      />
-                    )}
-                  />
-                ) : (
-                  <FormField
-                    type="text"
-                    label="Deductor's Name"
-                    name="deductor_name"
-                    value={values.deductor_name}
-                    placeholder="Enter Deductor's Name"
-                    variant="standard"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.deductor_name && Boolean(errors.deductor_name)}
-                    helperText={touched.deductor_name && errors.deductor_name}
-                  />
-                )}
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormField
-                  type="text"
-                  label="Deductor's Father's Name"
-                  name="deductor_father_name"
-                  value={values.deductor_father_name}
-                  placeholder="Enter Deductor's Father's Name"
-                  variant="standard"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.deductor_father_name && Boolean(errors.deductor_father_name)}
-                  helperText={touched.deductor_father_name && errors.deductor_father_name}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={3} p={1}>
-              {values.deductor_type == "Non-Employee" ? (
-                <Grid item xs={12} sm={6}>
-                  <FormField
-                    type="text"
-                    label="Deductor's Designation"
-                    name="deductor_designation"
-                    value={values.deductor_designation}
-                    placeholder="Enter Deductor's Designation"
-                    variant="standard"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.deductor_designation && Boolean(errors.deductor_designation)}
-                    helperText={touched.deductor_designation && errors.deductor_designation}
-                  />
+            <Divider />
+            {hiddenElements?.map((info, index) => (
+              <Grid key={index} container p={2}>
+                <Grid item sm={2.5}>
+                  {info.display_name}
                 </Grid>
-              ) : null}
-            </Grid>
-            <Grid item xs={12} sm={3} p={3} display="flex" justifyContent="flex-end">
-              <MDButton variant="gradient" color="info" type="submit">
-                {"Save"}
-              </MDButton>
-            </Grid>
-          </MDBox>
-        </Card>
-      </form>
-      {/* <Datedes /> */}
+                <Grid item sm={2.5}>
+                  {info.calculation_type === "% of Basic" ||
+                  info.calculation_type === "% of CTC" ? (
+                    <MDInput
+                      name={`calculation_type_${index}`}
+                      onChange={(e: { target: { value: any } }) => e.target.value}
+                      defaultValue={info.enter_amount_or_percent}
+                      sx={{ width: "75%" }}
+                    />
+                  ) : (
+                    "fixed amount"
+                  )}
+                </Grid>
+                <Grid item sm={2.5}>
+                  <MDInput sx={{ width: "75%" }} name={`month_amount_${index}`} type="number" />
+                </Grid>
+                <Grid item sm={2.5}>
+                  <Typography p={2}>
+                    <CloseIcon onClick={() => handleCancelClick(info)} />
+                  </Typography>
+                </Grid>
+              </Grid>
+            ))}
+          </Card>
+        </Grid>
+      </Grid>
     </DashboardLayout>
   );
-}
+};
 
-export default Taxes;
+export default Test;

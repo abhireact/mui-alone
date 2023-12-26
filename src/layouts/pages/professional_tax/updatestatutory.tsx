@@ -16,6 +16,8 @@ import { useEffect, useState } from "react";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import React from "react";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 const states = [
   "SELECT STATE",
@@ -156,7 +158,7 @@ const Updates = (props: any) => {
         .put("http://10.0.20.133:8000/professional_tax", requestData, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAxNjYzNTg2fQ._sBeTWEcHjk9vtraOdxaQ1WgZbUsbGEgdEOEHh_1iMc`,
+            Authorization: `Bearer ${token}`,
           },
         })
         .then((response) => {
