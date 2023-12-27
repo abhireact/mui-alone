@@ -22,6 +22,8 @@ import MDTypography from "components/MDTypography";
 import Autocomplete from "@mui/material/Autocomplete";
 import FormField from "layouts/ecommerce/products/new-product/components/FormField";
 import { useTranslation } from "react-i18next";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 const validationSchema = yup.object({
   name: yup.string().required("Please enter your work location"),
@@ -108,8 +110,7 @@ const Worklocations = () => {
       const response = await axios.get("http://10.0.20.133:8000/worklocation", {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6Im9tQGdtYWlsLmNvbSIsImV4cCI6MTY5ODIxMTkwMX0.h4f6_VMSHnkPVXJ5bkk3qXpTI_y9WbF5zlVnBgKx7Yc",
+          Authorization: `Bearer ${token}`,
         },
       });
       setTasks(response.data);
@@ -340,7 +341,7 @@ const Worklocations = () => {
               flexDirection: "column",
               p: 1,
               m: 1,
-              bgcolor: "background.paper",
+
               borderRadius: 2,
               flexBasis: "40%", // Display two cards in one row
             }}

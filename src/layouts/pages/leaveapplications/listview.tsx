@@ -49,7 +49,7 @@ const ListView = () => {
                 display: "flex",
                 flexDirection: "column",
                 py: 5,
-                bgcolor: "background.paper",
+
                 borderRadius: 2,
                 alignItems: "center",
                 textAlign: "center",

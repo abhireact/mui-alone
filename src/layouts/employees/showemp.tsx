@@ -19,6 +19,8 @@ import MDTypography from "components/MDTypography";
 import Avatar from "@mui/material/Avatar";
 import image1 from "./images/man.png";
 import image2 from "./images/woman.png";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 const Emp = () => {
   const handleDelete = async (first_name: any, last_name: any, email: any) => {
     try {
@@ -30,7 +32,7 @@ const Emp = () => {
         },
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwNzE2MTAxfQ.qGUKy1fkZx15cX_LGBkM1tj35t5YbkGqymbNfJiIiGg`,
+          Authorization: `Bearer ${token}`,
         },
       });
       window.location.reload();

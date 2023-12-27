@@ -100,7 +100,7 @@ const Professionaltax = () => {
               flexDirection: "column",
               p: 0.5,
               m: 0.5,
-              bgcolor: "background.paper",
+
               borderRadius: 2,
               flexBasis: "40%", // Display two cards in one row
             }}
@@ -198,7 +198,7 @@ const Professionaltax = () => {
               </MDBox>
             </Dialog>
 
-            <Dialog open={openupdate} onClose={handleCloseupdate} fullScreen>
+            <Dialog open={openupdate} onClose={handleCloseupdate}>
               <Updatestatutory
                 openupdate={openupdate}
                 setOpenupdate={setOpenupdate}

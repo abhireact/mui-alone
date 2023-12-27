@@ -144,7 +144,7 @@ const LeaveData: React.FC<LeaveDataProps> = ({ targetDate }) => {
                   flexDirection: "column",
                   p: 1,
                   m: 1,
-                  bgcolor: "background.paper",
+
                   borderRadius: 2,
                   flex: "0 0 calc(33.33% - 16px)",
                   justifyItems: "center",

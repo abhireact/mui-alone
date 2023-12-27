@@ -97,7 +97,7 @@ const Labourfund = () => {
               flexDirection: "column",
               p: 0.5,
               m: 0.5,
-              bgcolor: "background.paper",
+
               borderRadius: 2,
               flexBasis: "40%", // Display two cards in one row
             }}

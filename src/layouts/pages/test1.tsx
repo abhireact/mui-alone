@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Accordion from "@mui/material/Accordion";
@@ -7,7 +7,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import MDButton from "components/MDButton";
 import MDBox from "components/MDBox";
 import Divider from "@mui/material/Divider";
-import CloseIcon from "@mui/icons-material/Close";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
@@ -23,12 +23,23 @@ const token = Cookies.get("token");
 const Test = () => {
   const [data, setData] = useState([{ earning_type_name: "" }]);
   const [hiddenElements, setHiddenElements] = useState([]);
+  const [inputElements, setInputElements] = useState([{ month_amount: "" }]);
+  const [ann, setAnn] = useState([]);
+
+  const handleChange = (index: any, field: any, value: any) => {
+    // Update the state with the modified data
+    const updatedElements = [...hiddenElements];
+    updatedElements[index] = { ...updatedElements[index], [field]: value };
+    setInputElements(updatedElements);
+    console.log(inputElements, "changing elements");
+  };
+
   const handleCancelClick = (cancelledElement: any) => {
     const updatedHiddenElements = hiddenElements.filter((element) => element !== cancelledElement);
     setHiddenElements(updatedHiddenElements);
     console.log(hiddenElements, "hidden elements");
   };
-  const [ann, setAnn] = useState();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -52,6 +63,8 @@ const Test = () => {
   const handleClickOpen = (hello: any) => {
     setHiddenElements([...hiddenElements, hello]);
     console.log(hiddenElements, "it is working");
+    setInputElements([...inputElements, hello]);
+    console.log(inputElements, "sending data");
   };
 
   return (
@@ -122,7 +135,9 @@ const Test = () => {
                   info.calculation_type === "% of CTC" ? (
                     <MDInput
                       name={`calculation_type_${index}`}
-                      onChange={(e: { target: { value: any } }) => e.target.value}
+                      onChange={(e: { target: { value: any } }) =>
+                        handleChange(index, "enter_amount_or_percent", e.target.value)
+                      }
                       defaultValue={info.enter_amount_or_percent}
                       sx={{ width: "75%" }}
                     />
@@ -131,12 +146,32 @@ const Test = () => {
                   )}
                 </Grid>
                 <Grid item sm={2.5}>
-                  <MDInput sx={{ width: "75%" }} name={`month_amount_${index}`} type="number" />
+                  <MDInput
+                    sx={{ width: "75%" }}
+                    name={`month_amount_${index}`}
+                    type="number"
+                    onChange={(e: { target: { value: any } }) => {
+                      const monthlyAmount = e.target.value;
+                      handleChange(index, "month_amount", monthlyAmount);
+                      // Calculate and update annual amount
+                      const annualAmount = Number(monthlyAmount) * 12;
+                      setAnn((prevAnn) => {
+                        const updatedAnn = { ...prevAnn };
+                        updatedAnn[index] = annualAmount;
+                        return updatedAnn;
+                      });
+                    }}
+                    defaultValue={0}
+                  />
                 </Grid>
                 <Grid item sm={2.5}>
-                  <Typography p={2}>
-                    <CloseIcon onClick={() => handleCancelClick(info)} />
-                  </Typography>
+                  <MDInput value={ann[index] || 0} disabled sx={{ width: "55%" }} p={2} />
+                  <MDButton>
+                    <RemoveCircleOutlineIcon
+                      onClick={() => handleCancelClick(info)}
+                      color="primary"
+                    />
+                  </MDButton>
                 </Grid>
               </Grid>
             ))}

@@ -27,7 +27,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import Updatedep from "./updatedep";
 import { useTranslation } from "react-i18next";
-
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 //department validation
 const validationSchema = yup.object({
   departmentname: yup.string().required("Please enter department name"),
@@ -56,7 +57,7 @@ function DataTables(): JSX.Element {
       .get("http://10.0.20.133:8000/department", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjpudWxsLCJlbWFpbCI6Im9tQGdtYWlsLmNvbSIsImV4cCI6MTY5OTg2Njg4NX0.qZo6yboMJeGRuNZOmxsby3OTDNPEj7qcCHwtsKTvlYM`,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
