@@ -202,125 +202,118 @@ const Worklocations = () => {
         </Grid>
         <Card>
           <Dialog open={open} onClose={handleClose}>
-            <DialogContent>
-              <form onSubmit={formik.handleSubmit}>
-                <MDBox p={4}>
-                  <Grid container spacing={2}>
-                    <Grid sm={12} mb={2}>
-                      <MDInput
-                        sx={{ width: "80%" }}
-                        variant="standard"
-                        name="name"
-                        label="Work Location"
-                        value={formik.values.name}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.name && Boolean(formik.errors.name)}
-                        helperText={formik.touched.name && formik.errors.name}
-                        mb={10}
-                        mt={10}
-                      />
-                    </Grid>
-
-                    <Grid sm={12} mb={2}>
-                      <MDInput
-                        sx={{ width: "80%" }}
-                        variant="standard"
-                        name="address_line1"
-                        label="Address Line 1"
-                        value={formik.values.address_line1}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.address_line1 && Boolean(formik.errors.address_line1)}
-                        helperText={formik.touched.address_line1 && formik.errors.address_line1}
-                        mb={10}
-                      />
-                    </Grid>
-                    <Grid sm={12} mb={2}>
-                      <MDInput
-                        sx={{ width: "80%" }}
-                        variant="standard"
-                        name="address_line2"
-                        label="Address Line 2"
-                        value={formik.values.address_line2}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.address_line2 && Boolean(formik.errors.address_line2)}
-                        helperText={formik.touched.address_line2 && formik.errors.address_line2}
-                        mb={10}
-                      />
-                    </Grid>
-
-                    <Grid sm={4}>
-                      <Autocomplete
-                        sx={{ width: "80%" }}
-                        onChange={(event, value) => {
-                          formik.handleChange({
-                            target: { name: "state", value },
-                          });
-                        }}
-                        options={states}
-                        renderInput={(params) => (
-                          <FormField
-                            label="States"
-                            InputLabelProps={{ shrink: true }}
-                            name="state"
-                            onChange={formik.handleChange}
-                            value={formik.values.state}
-                            {...params}
-                            variant="outlined"
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid sm={4} mb={2}>
-                      <MDInput
-                        sx={{ width: "80%" }}
-                        autoComplete="off"
-                        variant="standard"
-                        name="pincode"
-                        label="Pincode"
-                        value={formik.values.pincode}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.pincode && Boolean(formik.errors.pincode)}
-                        helperText={formik.touched.pincode && formik.errors.pincode}
-                      />
-                    </Grid>
-                    <Grid sm={4} mb={2}>
-                      <MDInput
-                        sx={{ width: "80%" }}
-                        autoComplete="off"
-                        variant="standard"
-                        name="city"
-                        label="City"
-                        value={formik.values.city}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.city && Boolean(formik.errors.city)}
-                        helperText={formik.touched.city && formik.errors.city}
-                      />
-                    </Grid>
-
-                    <Grid mt={3}>
-                      <MDButton
-                        color="info"
-                        variant="contained"
-                        type="submit"
-                        onClick={handleClose}
-                      >
-                        Save
-                      </MDButton>
-                    </Grid>
-                    <Grid ml={2} mt={3}>
-                      <MDButton color="primary" variant="contained" onClick={handleClose}>
-                        Cancel
-                      </MDButton>
-                    </Grid>
+            <form onSubmit={formik.handleSubmit}>
+              <MDBox p={4}>
+                <Grid container spacing={2}>
+                  <Grid sm={12} mb={2}>
+                    <MDInput
+                      sx={{ width: "80%" }}
+                      variant="standard"
+                      name="name"
+                      label="Work Location"
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.name && Boolean(formik.errors.name)}
+                      helperText={formik.touched.name && formik.errors.name}
+                      mb={10}
+                      mt={10}
+                    />
                   </Grid>
-                </MDBox>
-              </form>
-            </DialogContent>
+
+                  <Grid sm={12} mb={2}>
+                    <MDInput
+                      sx={{ width: "80%" }}
+                      variant="standard"
+                      name="address_line1"
+                      label="Address Line 1"
+                      value={formik.values.address_line1}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.address_line1 && Boolean(formik.errors.address_line1)}
+                      helperText={formik.touched.address_line1 && formik.errors.address_line1}
+                      mb={10}
+                    />
+                  </Grid>
+                  <Grid sm={12} mb={2}>
+                    <MDInput
+                      sx={{ width: "80%" }}
+                      variant="standard"
+                      name="address_line2"
+                      label="Address Line 2"
+                      value={formik.values.address_line2}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.address_line2 && Boolean(formik.errors.address_line2)}
+                      helperText={formik.touched.address_line2 && formik.errors.address_line2}
+                      mb={10}
+                    />
+                  </Grid>
+
+                  <Grid sm={4}>
+                    <Autocomplete
+                      sx={{ width: "80%" }}
+                      onChange={(event, value) => {
+                        formik.handleChange({
+                          target: { name: "state", value },
+                        });
+                      }}
+                      options={states}
+                      renderInput={(params) => (
+                        <FormField
+                          label="States"
+                          InputLabelProps={{ shrink: true }}
+                          name="state"
+                          onChange={formik.handleChange}
+                          value={formik.values.state}
+                          {...params}
+                          variant="outlined"
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid sm={4} mb={2}>
+                    <MDInput
+                      sx={{ width: "80%" }}
+                      autoComplete="off"
+                      variant="standard"
+                      name="pincode"
+                      label="Pincode"
+                      value={formik.values.pincode}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.pincode && Boolean(formik.errors.pincode)}
+                      helperText={formik.touched.pincode && formik.errors.pincode}
+                    />
+                  </Grid>
+                  <Grid sm={4} mb={2}>
+                    <MDInput
+                      sx={{ width: "80%" }}
+                      autoComplete="off"
+                      variant="standard"
+                      name="city"
+                      label="City"
+                      value={formik.values.city}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.city && Boolean(formik.errors.city)}
+                      helperText={formik.touched.city && formik.errors.city}
+                    />
+                  </Grid>
+
+                  <Grid mt={3}>
+                    <MDButton color="info" variant="contained" type="submit" onClick={handleClose}>
+                      Save
+                    </MDButton>
+                  </Grid>
+                  <Grid ml={2} mt={3}>
+                    <MDButton color="primary" variant="contained" onClick={handleClose}>
+                      Cancel
+                    </MDButton>
+                  </Grid>
+                </Grid>
+              </MDBox>
+            </form>
           </Dialog>
         </Card>
       </MDBox>
@@ -392,16 +385,15 @@ const Worklocations = () => {
             >
               {task.city},{task.state},{task.pincode}
             </CardContent>
-            <Dialog open={openupdate} onClose={handleCloseupdate}>
-              <Updatework
-                openupdate={openupdate}
-                setOpenupdate={setOpenupdate}
-                task={editTaskData}
-              />
-            </Dialog>
+            <CardContent></CardContent>
           </Card>
         ))}
       </Grid>
+      <Dialog open={openupdate} onClose={handleCloseupdate}>
+        <div>
+          <Updatework openupdate={openupdate} setOpenupdate={setOpenupdate} task={editTaskData} />
+        </div>
+      </Dialog>
     </DashboardLayout>
   );
 };

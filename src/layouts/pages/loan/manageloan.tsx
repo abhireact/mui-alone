@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import MDBox from "components/MDBox";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -13,6 +13,8 @@ import DataTable from "examples/Tables/DataTable";
 import Editloan from "./editloantype";
 import Addloan from "./addloantype";
 import Dialog from "@mui/material/Dialog";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 const Manageloan = ({ setOpendialog }: any) => {
   const handleClosedialog = () => {
@@ -25,7 +27,7 @@ const Manageloan = ({ setOpendialog }: any) => {
         data: { loan_name: loan_name },
         headers: {
           "Content-Type": "application/json",
-          Authorization: ` Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMDMzMDExfQ.Wt4AoaDKZ9pJlQWOkIppoUOIIH1mMt3paiCdYExa2H8`,
+          Authorization: `Bearer ${token}`,
         },
       });
     } catch (error) {
@@ -37,7 +39,7 @@ const Manageloan = ({ setOpendialog }: any) => {
       .get("http://10.0.20.133:8000/manage_loan", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMDMzMDExfQ.Wt4AoaDKZ9pJlQWOkIppoUOIIH1mMt3paiCdYExa2H8`,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
@@ -105,19 +107,17 @@ const Manageloan = ({ setOpendialog }: any) => {
     setOpenupdate(false);
   }; //End
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
+    <MDBox p={4}>
+      <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }} py={2}>
+        <MDTypography variant="h3" fontWeight="medium">
+          Manage Loan
+        </MDTypography>
+      </Grid>
 
-      <MDTypography variant="h3" fontWeight="medium">
-        Manage Loans
-      </MDTypography>
-
-      <Grid sx={{ display: "flex", justifyContent: "flex-start" }}>
+      <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
         <MDButton variant="outlined" color="info" onClick={handleClickOpen}>
           + Create New Loan Type
         </MDButton>
-      </Grid>
-      <Grid sx={{ display: "flex", justifyContent: "flex-end" }}>
         <MDButton
           color="primary"
           variant="outlined"
@@ -135,7 +135,7 @@ const Manageloan = ({ setOpendialog }: any) => {
         <Editloan setOpenupdate={setOpenupdate} editData={editData} />
       </Dialog>
       <DataTable table={dataTableData} />
-    </DashboardLayout>
+    </MDBox>
   );
 };
 

@@ -8,6 +8,8 @@ import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 
 import axios from "axios";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 const Updatebreak = (props: any) => {
   const { setOpenupdate, editData } = props;
@@ -30,7 +32,7 @@ const Updatebreak = (props: any) => {
       axios.put("http://10.0.20.133:8000/manage_loan", sendData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMDMzMDExfQ.Wt4AoaDKZ9pJlQWOkIppoUOIIH1mMt3paiCdYExa2H8`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -74,7 +76,7 @@ const Updatebreak = (props: any) => {
               mt={10}
             />
           </Grid>
-          <Grid container sm={12}>
+          <Grid container sm={12} sx={{ display: "flex", justifyContent: "center" }}>
             <Grid mt={4}>
               <MDButton
                 color="info"

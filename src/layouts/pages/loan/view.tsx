@@ -8,6 +8,8 @@ import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 
 import MDBox from "components/MDBox";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 function transformString(inputString: string): string {
   // Split the input string into an array of substrings
@@ -54,8 +56,7 @@ const View = (props: any) => {
       axios.post("http://10.0.20.133:8000/loans_child", sendData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMTEwMzQ0fQ.yXoGAiYrgE55zEyiYpkacryNrZxp-TLiYgpV4_gVCTI",
+          Authorization: `Bearer ${token}`,
         },
       });
       handleClosedialog();

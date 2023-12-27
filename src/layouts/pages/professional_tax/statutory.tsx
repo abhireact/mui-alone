@@ -191,23 +191,21 @@ const Professionaltax = () => {
                 </Grid>
               </Grid>
             </CardContent>
-
-            <Dialog open={openpop} onClose={handleClosepop}>
-              <MDBox p={4}>
-                <View stateToFind={taxstate} />
-              </MDBox>
-            </Dialog>
-
-            <Dialog open={openupdate} onClose={handleCloseupdate}>
-              <Updatestatutory
-                openupdate={openupdate}
-                setOpenupdate={setOpenupdate}
-                task={editTaskData}
-              />
-            </Dialog>
           </Card>
         ))}
       </Grid>
+      <Dialog open={openupdate} onClose={handleCloseupdate}>
+        <Updatestatutory
+          openupdate={openupdate}
+          setOpenupdate={setOpenupdate}
+          task={editTaskData}
+        />
+      </Dialog>
+      <Dialog open={openpop} onClose={handleClosepop}>
+        <MDBox p={4}>
+          <View stateToFind={taxstate} />
+        </MDBox>
+      </Dialog>
     </DashboardLayout>
   );
 };

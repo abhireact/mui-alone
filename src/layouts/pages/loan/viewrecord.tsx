@@ -12,8 +12,10 @@ import Recordloan from "layouts/pages/loan/recordloan";
 import View from "layouts/pages/loan/view";
 import Grid from "@mui/material/Grid";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import Manageloan from "./loantype";
+import Manageloan from "./manageloan";
 import IconButton from "@mui/material/IconButton";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 const viewrecord = () => {
   const [data, setData] = useState([]);
@@ -38,8 +40,7 @@ const viewrecord = () => {
       const response = await axios.get("http://10.0.20.133:8000/record_loans", {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMTEwMzQ0fQ.yXoGAiYrgE55zEyiYpkacryNrZxp-TLiYgpV4_gVCTI",
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log(response.data);
@@ -118,10 +119,10 @@ const viewrecord = () => {
         </Grid>
       </Grid>
       <DataTable table={dataTableData} />
-      <Dialog open={open} onClose={handleClose} fullScreen>
+      <Dialog open={open} onClose={handleClose} maxWidth="md">
         <Recordloan setOpendialog={setOpen} />
       </Dialog>
-      <Dialog open={openloan} onClose={handleCloseloan} fullScreen>
+      <Dialog open={openloan} onClose={handleCloseloan} maxWidth="lg">
         <Manageloan setOpendialog={setOpenloan} />
       </Dialog>
       <Dialog open={openupdate} onClose={handleCloseupdate}>

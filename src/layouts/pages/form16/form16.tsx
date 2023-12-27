@@ -20,7 +20,7 @@ import Cookies from "js-cookie";
 import Grid from "@mui/material/Grid";
 
 const Employeesm = () => {
-  const token = Cookies.get("mytoken");
+  const token = Cookies.get("token");
 
   const [data, setData] = useState([]);
   const [deductor, setDeductor] = useState([]);

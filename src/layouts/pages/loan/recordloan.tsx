@@ -14,6 +14,8 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Checkbox from "@mui/material/Checkbox";
 
 import { FormControlLabel } from "@mui/material";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 function transformString(inputString: string): string {
   // Split the input string into an array of substrings
@@ -75,8 +77,7 @@ const Recordloan = (props: any) => {
       axios.post("http://10.0.20.133:8000/record_loans", sendData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMTEwMzQ0fQ.yXoGAiYrgE55zEyiYpkacryNrZxp-TLiYgpV4_gVCTI",
+          Authorization: `Bearer ${token}`,
         },
       });
       handleClosedialog();
@@ -89,8 +90,7 @@ const Recordloan = (props: any) => {
       const response = await axios.get("http://10.0.20.133:8000/worklocation", {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMTEwMzQ0fQ.yXoGAiYrgE55zEyiYpkacryNrZxp-TLiYgpV4_gVCTI",
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log(response.data);
@@ -104,8 +104,7 @@ const Recordloan = (props: any) => {
       const response = await axios.get("http://10.0.20.133:8000/record_loans/employee_name", {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMTEwMzQ0fQ.yXoGAiYrgE55zEyiYpkacryNrZxp-TLiYgpV4_gVCTI",
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log(response.data);
@@ -119,8 +118,7 @@ const Recordloan = (props: any) => {
       const response = await axios.get("http://10.0.20.133:8000/manage_loan", {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMTEwMzQ0fQ.yXoGAiYrgE55zEyiYpkacryNrZxp-TLiYgpV4_gVCTI",
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log(response.data);
@@ -135,17 +133,20 @@ const Recordloan = (props: any) => {
     Fetchloantypes();
   }, []);
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-
+    <MDBox p={4}>
       <form onSubmit={handleSubmit}>
-        <Grid container>
+        <Grid container sx={{ display: "flex", justifyContent: "center" }}>
+          <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }} pb={4}>
+            <MDTypography variant="h3" fontWeight="medium">
+              Record Loan
+            </MDTypography>
+          </Grid>
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Location Name</MDTypography>
+            <MDTypography variant="body2">Location Name</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <Autocomplete
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               options={locations}
               getOptionLabel={(object) => object.location_name}
               renderInput={(params) => <MDInput {...params} label="choose location" />}
@@ -158,11 +159,11 @@ const Recordloan = (props: any) => {
             />
           </Grid>
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Loan Name</MDTypography>
+            <MDTypography variant="body2">Loan Name</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <Autocomplete
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               options={loans}
               getOptionLabel={(object) => object.loan_name}
               renderInput={(params) => <MDInput {...params} label="choose loan" />}
@@ -176,11 +177,11 @@ const Recordloan = (props: any) => {
           </Grid>
 
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Employee Name</MDTypography>
+            <MDTypography variant="body2">Employee Name</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <Autocomplete
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               options={employees}
               getOptionLabel={(object) => object.employee_name}
               renderInput={(params) => <MDInput {...params} label="choose employee" />}
@@ -193,11 +194,11 @@ const Recordloan = (props: any) => {
             />
           </Grid>
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Loan Amount</MDTypography>
+            <MDTypography variant="body2">Loan Amount</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <MDInput
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               variant="standard"
               name="loan_amount"
               type="number"
@@ -207,11 +208,11 @@ const Recordloan = (props: any) => {
             />
           </Grid>
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Disbursment Date</MDTypography>
+            <MDTypography variant="body2">Disbursment Date</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <MDInput
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               variant="standard"
               name="disbursement_date"
               type="date"
@@ -221,11 +222,11 @@ const Recordloan = (props: any) => {
             />
           </Grid>
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Repayment Start Date</MDTypography>
+            <MDTypography variant="body2">Repayment Start Date</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <MDInput
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               variant="standard"
               name="repayment_date"
               type="date"
@@ -235,11 +236,11 @@ const Recordloan = (props: any) => {
             />
           </Grid>
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Instalment Amount</MDTypography>
+            <MDTypography variant="body2">Instalment Amount</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <MDInput
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               variant="standard"
               name="instalment_amount"
               type="number"
@@ -249,11 +250,11 @@ const Recordloan = (props: any) => {
             />
           </Grid>
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Paid through Amount</MDTypography>
+            <MDTypography variant="body2">Paid through Amount</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <MDInput
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               variant="standard"
               name="paid_through_account"
               value={values.paid_through_account}
@@ -263,11 +264,11 @@ const Recordloan = (props: any) => {
           </Grid>
 
           <Grid item sm={4}>
-            <MDTypography variant="inherit">Reason</MDTypography>
+            <MDTypography variant="body2">Reason</MDTypography>
           </Grid>
           <Grid item sm={6} mb={2}>
             <MDInput
-              sx={{ width: "45%" }}
+              sx={{ width: "65%" }}
               variant="standard"
               name="reason"
               multiline
@@ -278,7 +279,7 @@ const Recordloan = (props: any) => {
               onBlur={handleBlur}
             />
           </Grid>
-          <Grid container>
+          <Grid container sm={12}>
             <Grid sm={0.5}>
               <FormControlLabel
                 label={null}
@@ -321,7 +322,7 @@ const Recordloan = (props: any) => {
           </Grid>
         </Grid>
       </form>
-    </DashboardLayout>
+    </MDBox>
   );
 };
 

@@ -1,10 +1,11 @@
 import MDBox from "components/MDBox";
 import Grid from "@mui/material/Grid";
 import { useFormik } from "formik";
-
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 import axios from "axios";
 
@@ -28,7 +29,7 @@ const Addbreak = (props: any) => {
       axios.post("http://10.0.20.133:8000/manage_loan", sendData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: ` Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMDMzMDExfQ.Wt4AoaDKZ9pJlQWOkIppoUOIIH1mMt3paiCdYExa2H8`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -39,8 +40,10 @@ const Addbreak = (props: any) => {
     <MDBox p={4}>
       <form onSubmit={handleSubmit}>
         <Grid container>
-          <Grid item sm={4}>
-            <MDTypography variant="h5">Loan Name</MDTypography>
+          <Grid item sm={6}>
+            <MDTypography variant="h6" ml={10}>
+              Loan Name
+            </MDTypography>
           </Grid>
           <Grid item sm={6}>
             <MDInput
@@ -53,8 +56,10 @@ const Addbreak = (props: any) => {
               mt={10}
             />
           </Grid>
-          <Grid item sm={4}>
-            <MDTypography variant="h5">Prequisite Rate</MDTypography>
+          <Grid item sm={6}>
+            <MDTypography variant="h6" ml={10}>
+              Prequisite Rate
+            </MDTypography>
           </Grid>
           <Grid item sm={6}>
             <MDInput
@@ -69,7 +74,7 @@ const Addbreak = (props: any) => {
             />
           </Grid>
 
-          <Grid container sm={12}>
+          <Grid container sm={12} sx={{ display: "flex", justifyContent: "center" }}>
             <Grid mt={4}>
               <MDButton
                 color="info"

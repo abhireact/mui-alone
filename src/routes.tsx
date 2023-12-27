@@ -71,7 +71,7 @@ import Showholiday from "layouts/pages/holiday/showholiday";
 import Orgreport from "layouts/pages/organization_report/leave";
 import LTWreport from "layouts/pages/organization_report/leavetypesummary";
 import Dailyleave from "layouts/pages/organization_report/dailyleavestatus";
-import Manageloan from "layouts/pages/loan/loantype";
+import Manageloan from "layouts/pages/loan/manageloan";
 import Viewrecord from "layouts/pages/loan/viewrecord";
 import Holiday from "layouts/pages/holiday/showholiday";
 import Showemp from "layouts/employees/showemp";
