@@ -61,10 +61,12 @@ const SalaryTemp = () => {
   const handleAddField = (addfield: any) => {
     console.log(showElements, "add field");
     setShowElements([...showElements, addfield]);
+    setInputElements([...showElements, addfield]);
   };
   const handleRemoveField = (cancelledElement: any) => {
     const updatedElements = showElements.filter((element) => element !== cancelledElement);
     setShowElements(updatedElements);
+    setInputElements(updatedElements);
     console.log(showElements, "remove field");
   };
   useEffect(() => {
@@ -78,10 +80,11 @@ const SalaryTemp = () => {
         });
         if (response.status === 200) {
           console.log(response.data, " api data");
-          setData(transformEarningsArray(response.data));
-          console.log(transformEarningsArray(response.data), " transform api data");
+          setData(transformEarningsArray(response.data.slice(2, 4)));
+          console.log(transformEarningsArray(response.data.slice(2, 4)), " transform api data");
           setShowElements([transformEarningObject(response.data[1])]);
-          console.log(showElements, "default value ");
+          console.log(showElements, "default element");
+          setInputElements(transformEarningsArray(response.data[1]));
         }
       } catch (error) {
         console.log("Data not found");
@@ -109,6 +112,7 @@ const SalaryTemp = () => {
                   handleChange(_index, "enter_amount_or_percent", e.target.value)
                 }
                 sx={{ width: "100px" }}
+                value={inputElements[_index].enter_amount_or_percent}
               />
             </MDTypography>
           ) : (
@@ -141,6 +145,7 @@ const SalaryTemp = () => {
                 return updatedAnn;
               });
             }}
+            value={0}
           />
         </MDTypography>
       ),
