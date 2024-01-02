@@ -8,6 +8,8 @@ import Grid from "@mui/material/Grid";
 import MDTypography from "components/MDTypography";
 
 import axios from "axios";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 const ListView = () => {
   const [LeaveData, setleaveData] = useState([]);
@@ -16,7 +18,7 @@ const ListView = () => {
       const response = await axios.get("http://10.0.20.133:8000/currentleave/me", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6ImRyYXNoYW5uYWlkdTAwNEBnbWFpbC5jb20iLCJleHAiOjE2OTU3OTYxOTEsImFkbWluIjp0cnVlfQ.VUB7apGKIoeWtooKBMqZfDinaM7Og26zWxcqYzSukeE"}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       setleaveData(response.data);

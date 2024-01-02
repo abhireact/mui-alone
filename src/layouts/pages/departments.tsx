@@ -259,7 +259,7 @@ function DataTables(): JSX.Element {
           <Dialog open={openupdate} onClose={handleCloseupdate}>
             <Updatedep openupdate={openupdate} setOpenupdate={setOpenupdate} task={editTaskData} />
           </Dialog>
-          <DataTable table={dataTableData} />
+          <DataTable table={dataTableData} importbtn />
         </Card>
       </MDBox>
     </DashboardLayout>

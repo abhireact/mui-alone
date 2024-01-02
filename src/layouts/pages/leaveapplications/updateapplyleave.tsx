@@ -9,7 +9,8 @@ import MDButton from "components/MDButton";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useState } from "react";
-
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 const Updateleave = (props: any) => {
   const { openUpdate, setOpenupdate, task } = props;
   console.log(task, "task");
@@ -19,12 +20,12 @@ const Updateleave = (props: any) => {
   };
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
-      employee_name: "",
+      employee_name: task.employee_name,
       leave_type: task.leave_type,
-      team_email: "",
-      from_date: "",
-      to_date: "",
-      reason_for_leave: "",
+      team_email: task.team_email,
+      from_date: task.from_date,
+      to_date: task.to_date,
+      reason_for_leave: task.reason_for_leave,
       status: true,
     },
     onSubmit: (values, action) => {
@@ -43,7 +44,7 @@ const Updateleave = (props: any) => {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6ImRyYXNoYW5uYWlkdTAwNEBnbWFpbC5jb20iLCJleHAiOjE2OTU3OTYxOTEsImFkbWluIjp0cnVlfQ.VUB7apGKIoeWtooKBMqZfDinaM7Og26zWxcqYzSukeE"}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         )
@@ -63,7 +64,7 @@ const Updateleave = (props: any) => {
         <MDBox py={4} pl={8}>
           <Grid container>
             <Grid sm={4} my={3}>
-              <MDTypography>Employee ID</MDTypography>
+              <MDTypography variant="body2">Employee ID</MDTypography>
             </Grid>
             <Grid sm={6} my={3}>
               <MDInput
@@ -80,7 +81,7 @@ const Updateleave = (props: any) => {
             </Grid>
 
             <Grid sm={4} my={3}>
-              <MDTypography>Leave Type</MDTypography>
+              <MDTypography variant="body2">Leave Type</MDTypography>
             </Grid>
             <Grid sm={6} my={3}>
               <MDInput
@@ -97,7 +98,7 @@ const Updateleave = (props: any) => {
             </Grid>
 
             <Grid sm={3} my={3}>
-              <MDTypography>Date</MDTypography>
+              <MDTypography variant="body2">Date</MDTypography>
             </Grid>
             <Grid sm={3} my={3}>
               <MDInput
@@ -112,7 +113,7 @@ const Updateleave = (props: any) => {
               />
             </Grid>
             <Grid sm={1} my={3} px={1}>
-              to
+              <MDTypography variant="body2"> to</MDTypography>
             </Grid>
             <Grid sm={3} my={3}>
               <MDInput
@@ -128,7 +129,7 @@ const Updateleave = (props: any) => {
             </Grid>
 
             <Grid sm={4} my={3}>
-              <MDTypography>Team Email ID</MDTypography>
+              <MDTypography variant="body2">Team Email ID</MDTypography>
             </Grid>
             <Grid sm={6} my={3}>
               <MDInput
@@ -144,7 +145,7 @@ const Updateleave = (props: any) => {
               />
             </Grid>
             <Grid sm={4} my={3}>
-              <MDTypography>Reason for Leave</MDTypography>
+              <MDTypography variant="body2">Reason for Leave</MDTypography>
             </Grid>
             <Grid sm={6} my={3}>
               <MDInput

@@ -17,13 +17,14 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
-
+import DataTable from "examples/Tables/DataTable";
 const token = Cookies.get("token");
 
-const salary = () => {
-  const [data, setData] = useState([{ earning_type_name: "" }]);
+const SalaryTemp = () => {
+  const [data, setData] = useState([]);
+
   const [hiddenElements, setHiddenElements] = useState([]);
-  const [inputElements, setInputElements] = useState([{ month_amount: "" }]);
+  const [inputElements, setInputElements] = useState([]);
   const [ann, setAnn] = useState([]);
 
   const handleChange = (index: any, field: any, value: any) => {
@@ -52,6 +53,8 @@ const salary = () => {
         if (response.status === 200) {
           setData(response.data);
           console.log(response.data);
+          setHiddenElements([response.data[1]]);
+          console.log(hiddenElements, "default value ");
         }
       } catch (error) {
         console.log("Data not found");
@@ -61,12 +64,77 @@ const salary = () => {
   }, []);
 
   const handleClickOpen = (hello: any) => {
+    console.log(hiddenElements, " sending data");
     setHiddenElements([...hiddenElements, hello]);
-    console.log(hiddenElements, "it is working");
-    setInputElements([...inputElements, hello]);
-    console.log(inputElements, "sending data");
-  };
 
+    setInputElements([...inputElements, hello]);
+  };
+  const dataTableData = {
+    columns: [
+      { Header: "SALARY COMPONENTS", accessor: "earning_type_name" },
+      { Header: "CALCULATION TYPE", accessor: "calculation_type" },
+      { Header: "MONTHLY AMOUNT", accessor: "monthly_amount" },
+      { Header: "ANNUAL  AMOUNT", accessor: "annual_amount" },
+
+      { Header: "ACTION", accessor: "action" },
+    ],
+
+    rows: hiddenElements.map((row, _index) => ({
+      calculation_type: (
+        <div>
+          {row.calculation_type === "% of Basic" || row.calculation_type === "% of CTC" ? (
+            <MDTypography variant="p">
+              <MDInput
+                name={`calculation_type_${_index}`}
+                onChange={(e: { target: { value: any } }) =>
+                  handleChange(_index, "enter_amount_or_percent", e.target.value)
+                }
+                defaultValue={row.enter_amount_or_percent}
+                sx={{ width: "100px" }}
+              />
+            </MDTypography>
+          ) : (
+            <MDTypography variant="caption"> system calculated </MDTypography>
+          )}
+          <MDTypography variant="p"> {row.calculation_type} </MDTypography>
+        </div>
+      ),
+      earning_type_name: <MDTypography variant="p">{row.earning_type_name}</MDTypography>,
+      monthly_amount: (
+        <MDTypography variant="p">
+          {" "}
+          <MDInput
+            sx={{ width: "100px" }}
+            name={`month_amount_${_index}`}
+            type="number"
+            onChange={(e: { target: { value: any } }) => {
+              const monthlyAmount = e.target.value;
+              handleChange(_index, "month_amount", monthlyAmount);
+              // Calculate and update annual amount
+              const annualAmount = Number(monthlyAmount) * 12;
+              setAnn((prevAnn) => {
+                const updatedAnn = { ...prevAnn };
+                updatedAnn[_index] = annualAmount;
+                return updatedAnn;
+              });
+            }}
+            defaultValue={0}
+          />
+        </MDTypography>
+      ),
+      annual_amount: (
+        <MDTypography variant="p">
+          <MDInput value={ann[_index] || 0} disabled sx={{ width: "100px" }} p={2} />
+        </MDTypography>
+      ),
+
+      action: (
+        <MDButton>
+          <RemoveCircleOutlineIcon onClick={() => handleCancelClick(row)} color="primary" />
+        </MDButton>
+      ),
+    })),
+  };
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -88,12 +156,17 @@ const salary = () => {
                     display: hiddenElements.includes(info) ? "none" : "block",
                   }}
                 >
-                  <Typography variant="caption">
-                    {info?.earning_type_name}
-                    <MDButton color="info" variant="text" onClick={() => handleClickOpen(info)}>
-                      <AddIcon />
-                    </MDButton>
-                  </Typography>
+                  <Grid container>
+                    <Grid item sm={9}>
+                      {" "}
+                      <Typography variant="caption">{info?.earning_type_name}</Typography>
+                    </Grid>
+                    <Grid item sm={2}>
+                      <MDButton color="info" variant="text" onClick={() => handleClickOpen(info)}>
+                        <AddIcon />
+                      </MDButton>
+                    </Grid>
+                  </Grid>
                 </div>
               ))}
             </AccordionDetails>
@@ -101,7 +174,21 @@ const salary = () => {
         </Grid>
 
         <Grid item sm={9}>
-          <Card>
+          <DataTable
+            table={dataTableData}
+            isSorted={false}
+            entriesPerPage={false}
+            showTotalEntries={false}
+          />
+        </Grid>
+      </Grid>
+    </DashboardLayout>
+  );
+};
+
+export default SalaryTemp;
+{
+  /* <Card>
             <Grid container>
               <Grid item sm={2.5}>
                 <MDTypography variant="subtitle2" p={2}>
@@ -125,20 +212,19 @@ const salary = () => {
               </Grid>
             </Grid>
             <Divider />
-            {hiddenElements?.map((info, index) => (
+            {hiddenElements?.map((row, index) => (
               <Grid key={index} container p={2}>
                 <Grid item sm={2.5}>
-                  {info.display_name}
+                  {row.display_name}
                 </Grid>
                 <Grid item sm={2.5}>
-                  {info.calculation_type === "% of Basic" ||
-                  info.calculation_type === "% of CTC" ? (
+                  {row.calculation_type === "% of Basic" || row.calculation_type === "% of CTC" ? (
                     <MDInput
                       name={`calculation_type_${index}`}
                       onChange={(e: { target: { value: any } }) =>
                         handleChange(index, "enter_amount_or_percent", e.target.value)
                       }
-                      defaultValue={info.enter_amount_or_percent}
+                      defaultValue={row.enter_amount_or_percent}
                       sx={{ width: "75%" }}
                     />
                   ) : (
@@ -168,18 +254,12 @@ const salary = () => {
                   <MDInput value={ann[index] || 0} disabled sx={{ width: "55%" }} p={2} />
                   <MDButton>
                     <RemoveCircleOutlineIcon
-                      onClick={() => handleCancelClick(info)}
+                      onClick={() => handleCancelClick(row)}
                       color="primary"
                     />
                   </MDButton>
                 </Grid>
               </Grid>
             ))}
-          </Card>
-        </Grid>
-      </Grid>
-    </DashboardLayout>
-  );
-};
-
-export default salary;
+          </Card> */
+}

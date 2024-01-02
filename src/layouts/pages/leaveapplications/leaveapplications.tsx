@@ -13,6 +13,8 @@ import Dialog from "@mui/material/Dialog";
 import Updateleave from "./updateapplyleave";
 import Viewleave from "./viewleave";
 import React from "react";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 function getDaysDifference(startDateStr: string, endDateStr: string): number | string {
   // Parse the date strings into Date objects
   const startDate = new Date(startDateStr);
@@ -69,10 +71,10 @@ const Applyleave = () => {
 
   useEffect(() => {
     axios
-      .get("http://10.0.20.133:8000/apply_leave", {
+      .get("http://10.0.20.133:8000/apply_leave/manager_leave_applications", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNjk5OTU4NDcxfQ.Ak2T_beghsyFl-g3iuFoA9ne5ccPp0bd9vncnj6adCI`,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
