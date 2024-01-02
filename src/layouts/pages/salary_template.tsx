@@ -26,7 +26,33 @@ const SalaryTemp = () => {
   const [hiddenElements, setHiddenElements] = useState([]);
   const [inputElements, setInputElements] = useState([]);
   const [ann, setAnn] = useState([]);
-
+  const [annual, setAnnual] = useState(1); //annual CTC
+  function transformEarningsArray(earningsArray: any[]) {
+    return earningsArray.map(
+      (earning: {
+        earning_type_name: any;
+        calculation_type: any;
+        enter_amount_or_percent: any;
+      }) => ({
+        earning_type_name: earning.earning_type_name,
+        calculation_type: earning.calculation_type,
+        enter_amount_or_percent: earning.enter_amount_or_percent,
+        monthly_amount: annual * (Number(earning.enter_amount_or_percent) / 100),
+      })
+    );
+  }
+  function transformEarningObject(earning: {
+    earning_type_name: any;
+    calculation_type: any;
+    enter_amount_or_percent: any;
+  }) {
+    return {
+      earning_type_name: earning.earning_type_name,
+      calculation_type: earning.calculation_type,
+      enter_amount_or_percent: earning.enter_amount_or_percent,
+      monthly_amount: annual * (Number(earning.enter_amount_or_percent) / 100),
+    };
+  }
   const handleChange = (index: any, field: any, value: any) => {
     // Update the state with the modified data
     const updatedElements = [...hiddenElements];
@@ -51,9 +77,10 @@ const SalaryTemp = () => {
           },
         });
         if (response.status === 200) {
-          setData(response.data);
-          console.log(response.data);
-          setHiddenElements([response.data[1]]);
+          console.log(response.data, " api data");
+          setData(transformEarningsArray(response.data));
+          console.log(transformEarningsArray(response.data), " transform api data");
+          setHiddenElements([transformEarningObject(response.data[1])]);
           console.log(hiddenElements, "default value ");
         }
       } catch (error) {
@@ -63,7 +90,7 @@ const SalaryTemp = () => {
     fetchData();
   }, []);
 
-  const handleClickOpen = (hello: any) => {
+  const handleAddField = (hello: any) => {
     console.log(hiddenElements, " sending data");
     setHiddenElements([...hiddenElements, hello]);
 
@@ -89,7 +116,6 @@ const SalaryTemp = () => {
                 onChange={(e: { target: { value: any } }) =>
                   handleChange(_index, "enter_amount_or_percent", e.target.value)
                 }
-                defaultValue={row.enter_amount_or_percent}
                 sx={{ width: "100px" }}
               />
             </MDTypography>
@@ -107,9 +133,10 @@ const SalaryTemp = () => {
             sx={{ width: "100px" }}
             name={`month_amount_${_index}`}
             type="number"
+            disabled={false}
             onChange={(e: { target: { value: any } }) => {
-              const monthlyAmount = e.target.value;
-              handleChange(_index, "month_amount", monthlyAmount);
+              let monthlyAmount = e.target.value;
+              handleChange(_index, "monthly_amount", monthlyAmount);
               // Calculate and update annual amount
               const annualAmount = Number(monthlyAmount) * 12;
               setAnn((prevAnn) => {
@@ -118,20 +145,27 @@ const SalaryTemp = () => {
                 return updatedAnn;
               });
             }}
-            defaultValue={0}
           />
         </MDTypography>
       ),
       annual_amount: (
         <MDTypography variant="p">
-          <MDInput value={ann[_index] || 0} disabled sx={{ width: "100px" }} p={2} />
+          <MDInput value={ann[_index] || 0} disabled={false} sx={{ width: "100px" }} p={2} />
         </MDTypography>
       ),
 
       action: (
-        <MDButton>
-          <RemoveCircleOutlineIcon onClick={() => handleCancelClick(row)} color="primary" />
-        </MDButton>
+        <>
+          {row.calculation_type === "Basic Salary" ? (
+            <MDButton>
+              <RemoveCircleOutlineIcon color="disabled" />
+            </MDButton>
+          ) : (
+            <MDButton>
+              <RemoveCircleOutlineIcon onClick={() => handleCancelClick(row)} color="primary" />
+            </MDButton>
+          )}
+        </>
       ),
     })),
   };
@@ -139,6 +173,9 @@ const SalaryTemp = () => {
     <DashboardLayout>
       <DashboardNavbar />
       <Grid container spacing={2}>
+        <Grid item xs={12} sm={12} mb={2}>
+          <MDTypography variant="h5">Salary Details</MDTypography>
+        </Grid>
         <Grid item sm={3}>
           <Accordion>
             <AccordionSummary
@@ -158,11 +195,10 @@ const SalaryTemp = () => {
                 >
                   <Grid container>
                     <Grid item sm={9}>
-                      {" "}
                       <Typography variant="caption">{info?.earning_type_name}</Typography>
                     </Grid>
                     <Grid item sm={2}>
-                      <MDButton color="info" variant="text" onClick={() => handleClickOpen(info)}>
+                      <MDButton color="info" variant="text" onClick={() => handleAddField(info)}>
                         <AddIcon />
                       </MDButton>
                     </Grid>
@@ -174,12 +210,23 @@ const SalaryTemp = () => {
         </Grid>
 
         <Grid item sm={9}>
-          <DataTable
-            table={dataTableData}
-            isSorted={false}
-            entriesPerPage={false}
-            showTotalEntries={false}
-          />
+          <Card>
+            <MDTypography variant="button" color="text" fontWeight="bold">
+              Annual CTC *
+            </MDTypography>
+            <MDInput
+              value={annual}
+              onChange={(e: { target: { value: React.SetStateAction<number> } }) =>
+                setAnnual(e.target.value)
+              }
+            />
+            <DataTable
+              table={dataTableData}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+            />
+          </Card>
         </Grid>
       </Grid>
     </DashboardLayout>
@@ -187,8 +234,8 @@ const SalaryTemp = () => {
 };
 
 export default SalaryTemp;
-{
-  /* <Card>
+
+/* <Card>
             <Grid container>
               <Grid item sm={2.5}>
                 <MDTypography variant="subtitle2" p={2}>
@@ -262,4 +309,3 @@ export default SalaryTemp;
               </Grid>
             ))}
           </Card> */
-}

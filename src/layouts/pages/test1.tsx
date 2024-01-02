@@ -1,184 +1,226 @@
-import axios from "axios";
-import FormField from "layouts/ecommerce/products/new-product/components/FormField";
-import MDTypography from "components/MDTypography";
-import Card from "@mui/material/Card";
-import MDInput from "components/MDInput";
-import MDBox from "components/MDBox";
-import Grid from "@mui/material/Grid";
+import React, { useEffect, useState, useRef } from "react";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 import MDButton from "components/MDButton";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { useState } from "react";
-
-import SendIcon from "@mui/icons-material/Send";
+import MDBox from "components/MDBox";
+import Divider from "@mui/material/Divider";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AddIcon from "@mui/icons-material/Add";
 import Cookies from "js-cookie";
+import axios from "axios";
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+import MDTypography from "components/MDTypography";
+import MDInput from "components/MDInput";
+import DataTable from "examples/Tables/DataTable";
 const token = Cookies.get("token");
-const Applyleave = (props: any) => {
-  const { openUpdate, setOpenupdate, task } = props;
 
-  const handleCloseupdate = () => {
-    setOpenupdate(false);
+const SalaryTemp = () => {
+  const [data, setData] = useState([]);
+  const [showElements, setShowElements] = useState([]);
+  const [inputElements, setInputElements] = useState([]);
+  const [annualamount, setAnnualamount] = useState([]);
+  function transformEarningsArray(earningsArray: any[]) {
+    return earningsArray.map(
+      (earning: {
+        earning_type_name: any;
+        calculation_type: any;
+        enter_amount_or_percent: any;
+      }) => ({
+        earning_type_name: earning.earning_type_name,
+        calculation_type: earning.calculation_type,
+        enter_amount_or_percent: earning.enter_amount_or_percent,
+        monthly_amount: 0,
+      })
+    );
+  }
+  function transformEarningObject(earning: {
+    earning_type_name: any;
+    calculation_type: any;
+    enter_amount_or_percent: any;
+  }) {
+    return {
+      earning_type_name: earning.earning_type_name,
+      calculation_type: earning.calculation_type,
+      enter_amount_or_percent: earning.enter_amount_or_percent,
+      monthly_amount: 0,
+    };
+  }
+  const handleChange = (index: any, field: any, value: any) => {
+    // Update the state with the modified data
+    const updatedElements = [...showElements];
+    updatedElements[index] = { ...updatedElements[index], [field]: value };
+    setInputElements(updatedElements);
+    console.log(inputElements, "changing input elements");
   };
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
-    initialValues: {
-      employee_name: "",
-      leave_type: "",
-      team_email: "",
-      from_date: "",
-      to_date: "",
-      reason_for_leave: "",
-      status: true,
-    },
-    onSubmit: (values, action) => {
-      axios
-        .post(
-          "http://10.0.20.133:8000/apply_leave",
-          {
-            leave_type: values.leave_type,
-            employee_name: values.employee_name,
-            team_email: values.team_email,
-            from_date: values.from_date,
-            to_date: values.to_date,
-            reason_for_leave: values.reason_for_leave,
-            status: values.status,
+  const handleAddField = (addfield: any) => {
+    console.log(showElements, "add field");
+    setShowElements([...showElements, addfield]);
+  };
+  const handleRemoveField = (cancelledElement: any) => {
+    const updatedElements = showElements.filter((element) => element !== cancelledElement);
+    setShowElements(updatedElements);
+    console.log(showElements, "remove field");
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://10.0.20.133:8000/mg_earning_type", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
         });
-      console.log(values, "values");
-      action.resetForm();
-    },
-  });
+        if (response.status === 200) {
+          console.log(response.data, " api data");
+          setData(transformEarningsArray(response.data));
+          console.log(transformEarningsArray(response.data), " transform api data");
+          setShowElements([transformEarningObject(response.data[1])]);
+          console.log(showElements, "default value ");
+        }
+      } catch (error) {
+        console.log("Data not found");
+      }
+    };
+    fetchData();
+  }, []);
+  const dataTableData = {
+    columns: [
+      { Header: "SALARY COMPONENTS", accessor: "earning_type_name" },
+      { Header: "CALCULATION TYPE", accessor: "calculation_type" },
+      { Header: "MONTHLY AMOUNT", accessor: "monthly_amount" },
+      { Header: "ANNUAL  AMOUNT", accessor: "annual_amount" },
+      { Header: "ACTION", accessor: "action" },
+    ],
+
+    rows: showElements.map((row, _index) => ({
+      calculation_type: (
+        <div>
+          {row.calculation_type === "% of Basic" || row.calculation_type === "% of CTC" ? (
+            <MDTypography variant="p">
+              <MDInput
+                name={`calculation_type_${_index}`}
+                onChange={(e: { target: { value: any } }) =>
+                  handleChange(_index, "enter_amount_or_percent", e.target.value)
+                }
+                sx={{ width: "100px" }}
+              />
+            </MDTypography>
+          ) : (
+            <MDTypography variant="caption"> system calculated </MDTypography>
+          )}
+          <MDTypography variant="p"> {row.calculation_type} </MDTypography>
+        </div>
+      ),
+      earning_type_name: <MDTypography variant="p">{row.earning_type_name}</MDTypography>,
+      monthly_amount: (
+        <MDTypography variant="p">
+          {" "}
+          <MDInput
+            sx={{ width: "100px" }}
+            name={`month_amount_${_index}`}
+            type="number"
+            disabled={
+              row.calculation_type === "% of CTC" || row.calculation_type === "% of Basic"
+                ? true
+                : false
+            }
+            onChange={(e: { target: { value: any } }) => {
+              let monthlyAmount = e.target.value;
+              handleChange(_index, "monthly_amount", monthlyAmount);
+              // Calculate and update annual amount
+              const annualAmount = Number(monthlyAmount) * 12;
+              setAnnualamount((prevAnn) => {
+                const updatedAnn = { ...prevAnn };
+                updatedAnn[_index] = annualAmount;
+                return updatedAnn;
+              });
+            }}
+          />
+        </MDTypography>
+      ),
+      annual_amount: (
+        <MDTypography variant="p">
+          <MDInput value={annualamount[_index] || 0} disabled sx={{ width: "100px" }} p={2} />
+        </MDTypography>
+      ),
+
+      action: (
+        <>
+          {row.calculation_type === "% of CTC" ? (
+            <MDButton>
+              <RemoveCircleOutlineIcon color="disabled" />
+            </MDButton>
+          ) : (
+            <MDButton>
+              <RemoveCircleOutlineIcon onClick={() => handleRemoveField(row)} color="primary" />
+            </MDButton>
+          )}
+        </>
+      ),
+    })),
+  };
   return (
-    <>
-      <MDBox p={4} sx={{ display: "flex", justifyContent: "center" }}>
-        <form onSubmit={handleSubmit}>
-          <Grid container>
-            <Grid sm={6} my={3} sx={{ display: "flex", justifyContent: "center" }}>
-              <MDTypography variant="body2">Employee ID</MDTypography>
-            </Grid>
-            <Grid sm={4} my={3}>
-              <MDInput
-                sx={{ width: "90%" }}
-                autoComplete="off"
-                variant="standard"
-                name="employee_name"
-                value={values.employee_name}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.employee_name && Boolean(errors.employee_name)}
-                helperText={touched.employee_name && errors.employee_name}
-              />
-            </Grid>
+    <DashboardLayout>
+      <DashboardNavbar />
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={12} mb={2}>
+          <MDTypography variant="h5">Salary Details</MDTypography>
+        </Grid>
+        <Grid item sm={3}>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>Earning</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {data.map((info, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: showElements.includes(info) ? "none" : "block",
+                  }}
+                >
+                  <Grid container>
+                    <Grid item sm={10}>
+                      <Typography variant="caption">{info?.earning_type_name}</Typography>
+                    </Grid>
+                    <Grid item sm={2}>
+                      <MDButton color="info" variant="text" onClick={() => handleAddField(info)}>
+                        <AddIcon />
+                      </MDButton>
+                    </Grid>
+                  </Grid>
+                </div>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+        <Grid item sm={9}>
+          <Card>
+            <MDTypography variant="button" color="text" fontWeight="bold">
+              Annual CTC *
+            </MDTypography>
 
-            <Grid sm={6} my={3} sx={{ display: "flex", justifyContent: "center" }}>
-              <MDTypography variant="body2">Leave Type</MDTypography>
-            </Grid>
-            <Grid sm={4} my={3}>
-              <MDInput
-                sx={{ width: "90%" }}
-                autoComplete="off"
-                variant="standard"
-                name="leave_type"
-                value={values.leave_type}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.leave_type && Boolean(errors.leave_type)}
-                helperText={touched.leave_type && errors.leave_type}
-              />
-            </Grid>
-
-            <Grid sm={5} my={3} sx={{ display: "flex", justifyContent: "center" }}>
-              <MDTypography variant="body2" pl={6}>
-                Date
-              </MDTypography>
-            </Grid>
-            <Grid sm={2} my={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <MDInput
-                type="date"
-                name="from_date"
-                variant="standard"
-                value={values.from_date}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.from_date && Boolean(errors.from_date)}
-                helperText={touched.from_date && errors.from_date}
-              />
-            </Grid>
-            <Grid sm={1} my={3} sx={{ display: "flex", justifyContent: "center" }}>
-              <MDTypography variant="body2"> to</MDTypography>
-            </Grid>
-            <Grid sm={2} my={3} sx={{ display: "flex", justifyContent: "center" }}>
-              <MDInput
-                type="date"
-                name="to_date"
-                variant="standard"
-                value={values.to_date}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.to_date && Boolean(errors.to_date)}
-                helperText={touched.to_date && errors.to_date}
-              />
-            </Grid>
-
-            <Grid sm={6} my={3} sx={{ display: "flex", justifyContent: "center" }}>
-              <MDTypography variant="body2">Team Email ID</MDTypography>
-            </Grid>
-            <Grid sm={4} my={3}>
-              <MDInput
-                sx={{ width: "90%" }}
-                autoComplete="off"
-                variant="standard"
-                name="team_email"
-                value={values.team_email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.team_email && Boolean(errors.team_email)}
-                helperText={touched.team_email && errors.team_email}
-              />
-            </Grid>
-            <Grid sm={6} my={3} sx={{ display: "flex", justifyContent: "center" }}>
-              <MDTypography variant="body2">Reason for Leave</MDTypography>
-            </Grid>
-            <Grid sm={4} my={3}>
-              <MDInput
-                multiline
-                rows={3}
-                sx={{ width: "90%" }}
-                autoComplete="off"
-                variant="standard"
-                name="reason_for_leave"
-                value={values.reason_for_leave}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.reason_for_leave && Boolean(errors.reason_for_leave)}
-                helperText={touched.reason_for_leave && errors.reason_for_leave}
-              />
-            </Grid>
-
-            <Grid container spacing={2} my={2} sx={{ display: "flex", justifyContent: "center" }}>
-              <MDButton color="info" type="submit" variant="outlined">
-                <MDTypography color="blue" variant="h6">
-                  Submit &nbsp;
-                </MDTypography>
-                <SendIcon />
-              </MDButton>
-            </Grid>
-          </Grid>
-        </form>
-      </MDBox>
-    </>
+            <DataTable
+              table={dataTableData}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+            />
+          </Card>
+        </Grid>
+      </Grid>
+    </DashboardLayout>
   );
 };
 
-export default Applyleave;
+export default SalaryTemp;
