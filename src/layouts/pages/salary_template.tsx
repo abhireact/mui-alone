@@ -13,6 +13,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { message } from "antd";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import MDTypography from "components/MDTypography";
@@ -169,6 +170,7 @@ const SalaryTemp = () => {
       ),
     })),
   };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
