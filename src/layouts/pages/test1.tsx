@@ -19,13 +19,14 @@ import MDInput from "components/MDInput";
 import DataTable from "examples/Tables/DataTable";
 import Basic from "layouts/authentication/sign-in/basic";
 const token = Cookies.get("token");
+import { message } from "antd";
 
 const SalaryTemp = () => {
   const [template, setTemplate] = useState("");
   const [description, setDescription] = useState("");
+  // EARNINGS
   const [data, setData] = useState([]);
   const [showElements, setShowElements] = useState([]);
-
   const [annualamount, setAnnualamount] = useState([]);
   const [annualctc, setAnnualctc] = useState(0);
   const [basicpercent, setBasicpercent] = useState(0);
@@ -70,6 +71,26 @@ const SalaryTemp = () => {
       }
     );
   }
+  // DEDUCTIONS
+  const [datadeduction, setDatadeduction] = useState([]);
+  const [showdeductions, setShowdeductions] = useState([]);
+
+  function transformDeductionsArray(deductionsArray: any[]) {
+    return deductionsArray.map(
+      (deduction: { monthly_amount: number; pre_name_slip: any; calculation_type: any }) => {
+        const monthly_amount = deduction.monthly_amount || 0;
+        return {
+          pre_name_slip: deduction.pre_name_slip,
+          calculation_type: deduction.calculation_type || "Fixed Amount",
+
+          monthly_amount: monthly_amount,
+          annual_amount: monthly_amount * 12,
+        };
+      }
+    );
+  }
+  // EARNING CHANGES
+
   const handleChange = (index: any, field: any, value: any) => {
     // Update the state with the modified data
     const updatedElements = [...showElements];
@@ -84,32 +105,69 @@ const SalaryTemp = () => {
   const handleRemoveField = (cancelledElement: any) => {
     const updatedElements = showElements.filter((element) => element !== cancelledElement);
     setShowElements(updatedElements);
-
     console.log(showElements, "remove field");
   };
+
   useEffect(() => {
     setShowElements(transformEarningsArray(showElements));
   }, [annualctc, showElements, basicpercent]);
+
+  // DEDUCTION CHANGES
+
+  const handleChangedeductions = (index: any, field: any, value: any) => {
+    // Update the state with the modified data
+    const updateddeductions = [...showdeductions];
+    updateddeductions[index] = { ...updateddeductions[index], [field]: value };
+    setShowdeductions(updateddeductions);
+    console.log(showdeductions, "changing deduction input elements");
+  };
+  const handleAdd = (addfield: any) => {
+    setShowdeductions([...showdeductions, addfield]);
+    console.log(showdeductions, " add field deductions ");
+  };
+  const handleRemove = (cancelledElement: any) => {
+    const updateddeductions = showdeductions.filter((element) => element !== cancelledElement);
+    setShowdeductions(updateddeductions);
+    console.log(showdeductions, " remove field deductions ");
+  };
+  useEffect(() => {
+    setShowdeductions(transformDeductionsArray(showdeductions));
+  }, [showdeductions]);
+
+  // fetching deductions and earning
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://10.0.20.133:8000/mg_earning_type", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "http://10.0.20.133:8000/employee_salary_details/combined_data",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (response.status === 200) {
-          setBasicpercent(response.data[1].enter_amount_or_percent);
-          console.log(Number(response.data[1].enter_amount_or_percent), "basic percent");
+          setBasicpercent(response.data.earning_types[1].enter_amount_or_percent);
+          console.log(
+            Number(response.data.earning_types[1].enter_amount_or_percent),
+            "basic percent"
+          );
           console.log(response.data, " api data");
-          const transformarray = transformEarningsArray(response.data);
+          const transformarray = transformEarningsArray(response.data.earning_types);
 
           setData(transformEarningsArray(transformarray.slice(2, 4)));
           console.log(transformEarningsArray(transformarray.slice(2, 4)), " transform api data");
           setShowElements([transformarray[1]]);
           setBasicpercent(transformarray[1].enter_amount_or_percent);
           console.log(showElements, "default element");
+          console.log(response.data.pre_tax_deductions, " deduction api data ");
+          console.log(
+            transformDeductionsArray(response.data.pre_tax_deductions),
+            " transform deduction api data "
+          );
+          setDatadeduction(transformDeductionsArray(response.data.pre_tax_deductions));
         }
       } catch (error) {
         console.log("Data not found");
@@ -119,11 +177,11 @@ const SalaryTemp = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "SALARY COMPONENTS", accessor: "earning_type_name" },
-      { Header: "CALCULATION TYPE", accessor: "calculation_type" },
-      { Header: "MONTHLY AMOUNT", accessor: "monthly_amount" },
-      { Header: "ANNUAL  AMOUNT", accessor: "annual_amount" },
-      { Header: "ACTION", accessor: "action" },
+      { Header: "SALARY COMPONENTS", accessor: "earning_type_name", width: "20%" },
+      { Header: "CALCULATION TYPE", accessor: "calculation_type", width: "20%" },
+      { Header: "MONTHLY AMOUNT", accessor: "monthly_amount", width: "20%" },
+      { Header: "ANNUAL  AMOUNT", accessor: "annual_amount", width: "20%" },
+      { Header: "ACTION", accessor: "action", width: "20%" },
     ],
 
     rows: showElements.map((row, _index) => ({
@@ -135,7 +193,7 @@ const SalaryTemp = () => {
                 onChange={(e: { target: { value: any } }) => {
                   handleChange(_index, "enter_amount_or_percent", e.target.value);
                 }}
-                sx={{ width: "100px" }}
+                sx={{ width: "50px" }}
                 // value={showElements[_index].enter_amount_or_percent}
                 value={showElements[_index].enter_amount_or_percent}
               />
@@ -163,7 +221,6 @@ const SalaryTemp = () => {
 
               handleChange(_index, "monthly_amount", Number(monthlyAmount));
               // Calculate and update annual amount
-              const annualAmount = Number(monthlyAmount) * 12;
             }}
             value={showElements[_index].monthly_amount}
           />
@@ -195,11 +252,62 @@ const SalaryTemp = () => {
       ),
     })),
   };
+  const deductionData = {
+    columns: [
+      { accessor: "pre_name_slip", width: "20%" },
+      { accessor: "calculation_type", width: "20%" },
+      { accessor: "monthly_amount", width: "20%" },
+      { accessor: "annual_amount", width: "20%" },
+
+      { accessor: "action", width: "20%" },
+    ],
+
+    rows: showdeductions.map((row, _index) => ({
+      pre_name_slip: <MDTypography variant="p">{row.pre_name_slip}</MDTypography>,
+      calculation_type: <MDTypography variant="p"> {row.calculation_type} </MDTypography>,
+      monthly_amount: (
+        <MDTypography variant="p">
+          <MDInput
+            sx={{ width: "100px" }}
+            type="number"
+            onChange={(e: { target: { value: any } }) => {
+              let monthlyAmount = e.target.value;
+
+              handleChangedeductions(_index, "monthly_amount", Number(monthlyAmount));
+              // Calculate and update annual amount
+            }}
+            value={showdeductions[_index].monthly_amount}
+          />
+        </MDTypography>
+      ),
+      annual_amount: (
+        <MDTypography variant="p">
+          <MDInput
+            value={showdeductions[_index].annual_amount}
+            disabled
+            sx={{ width: "100px" }}
+            p={2}
+          />
+        </MDTypography>
+      ),
+      action: (
+        <MDButton>
+          <RemoveCircleOutlineIcon onClick={() => handleRemove(row)} color="primary" />
+        </MDButton>
+      ),
+    })),
+  };
   const handleSubmit = () => {
     axios
       .post(
         "http://10.0.20.133:8000/mg_salary_template",
-        { showElements },
+        {
+          template_name: template,
+          template_description: description,
+          annual_ctc: annualctc,
+          earning_type_name: showElements,
+          pre_tax_name: showdeductions,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -209,6 +317,7 @@ const SalaryTemp = () => {
       )
       .then((response) => {
         console.log(response);
+        message.success("created successfully");
         if (response.status === 200) {
           console.log("success");
         }
@@ -216,114 +325,183 @@ const SalaryTemp = () => {
       .catch((error) => {
         console.error("Error deleting task:", error);
         const myError = error as Error;
-        console.error("An unexpected error occurred");
+        message.error("An unexpected error occurred");
       });
   };
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={12} mb={2}>
-          <MDTypography variant="h5">Salary Details</MDTypography>
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={12} mb={2}>
+            <MDTypography variant="h5">Salary Details</MDTypography>
+          </Grid>
+          <Grid item sm={3}>
+            <Card>
+              <Grid p={2}>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography variant="body2">EARNING</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {data.map((info, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: showElements.some(
+                            (a) => a.earning_type_name === info.earning_type_name
+                          )
+                            ? "none"
+                            : "block",
+                        }}
+                      >
+                        <Grid container>
+                          <Grid item sm={10}>
+                            <Typography variant="overline">{info?.earning_type_name}</Typography>
+                          </Grid>
+                          <Grid item sm={2}>
+                            <MDButton
+                              color="info"
+                              variant="text"
+                              onClick={() => handleAddField(info)}
+                            >
+                              <AddIcon />
+                            </MDButton>
+                          </Grid>
+                        </Grid>
+                      </div>
+                    ))}
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography variant="body2">DEDUCTIONS</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {datadeduction.map((info, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: showdeductions.some(
+                            (a) => a.pre_name_slip === info.pre_name_slip
+                          )
+                            ? "none"
+                            : "block",
+                        }}
+                      >
+                        <Grid container>
+                          <Grid item sm={10}>
+                            <Typography variant="overline">{info?.pre_name_slip}</Typography>
+                          </Grid>
+                          <Grid item sm={2}>
+                            <MDButton
+                              color="info"
+                              variant="text"
+                              onClick={() => {
+                                handleAdd(info);
+                              }}
+                            >
+                              <AddIcon />
+                            </MDButton>
+                          </Grid>
+                        </Grid>
+                      </div>
+                    ))}
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            </Card>
+          </Grid>
+          <Grid item sm={9}>
+            <Card sx={{ borderRadius: 0 }}>
+              <Grid container px={4} pt={2}>
+                <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDTypography variant="h6">Template Name</MDTypography>
+                </Grid>
+                <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDTypography variant="h6">Description</MDTypography>
+                </Grid>
+              </Grid>
+              <Grid container px={4}>
+                <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDInput
+                    required
+                    onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                      setTemplate(e.target.value)
+                    }
+                    value={template}
+                  />
+                </Grid>
+                <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDInput
+                    required
+                    onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                      setDescription(e.target.value)
+                    }
+                    value={description}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container p={4}>
+                <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDTypography variant="h6">Annual CTC *</MDTypography>
+                </Grid>
+                <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDInput
+                    required
+                    onChange={(e: { target: { value: React.SetStateAction<number> } }) =>
+                      setAnnualctc(e.target.value)
+                    }
+                    value={annualctc}
+                  />
+                </Grid>
+              </Grid>
+              <Grid sx={{ display: "flex", justifyContent: "flex-start" }} p={2}>
+                <MDTypography variant="h6">EARNINGS</MDTypography>
+              </Grid>
+              <DataTable
+                table={dataTableData}
+                isSorted={false}
+                entriesPerPage={false}
+                showTotalEntries={false}
+              />
+              {showdeductions.length === 0 ? (
+                ""
+              ) : (
+                <Grid sx={{ display: "flex", justifyContent: "flex-start" }} pl={2}>
+                  <MDTypography variant="h6">DEDUCTIONS</MDTypography>
+                </Grid>
+              )}
+              <DataTable
+                table={deductionData}
+                isSorted={false}
+                entriesPerPage={false}
+                showTotalEntries={false}
+              />
+            </Card>
+          </Grid>
         </Grid>
-        <Grid item sm={3}>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography color="text">Earning</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {data.map((info, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: showElements.some(
-                      (a) => a.earning_type_name === info.earning_type_name
-                    )
-                      ? "none"
-                      : "block",
-                  }}
-                >
-                  <Grid container>
-                    <Grid item sm={10}>
-                      <Typography variant="caption">{info?.earning_type_name}</Typography>
-                    </Grid>
-                    <Grid item sm={2}>
-                      <MDButton color="info" variant="text" onClick={() => handleAddField(info)}>
-                        <AddIcon />
-                      </MDButton>
-                    </Grid>
-                  </Grid>
-                </div>
-              ))}
-            </AccordionDetails>
-          </Accordion>
+        <Grid container m={4}>
+          <Grid item>
+            <MDButton color="info" variant="contained" type="submit">
+              Save
+            </MDButton>
+          </Grid>
+          <Grid item ml={2}>
+            <MDButton color="primary" variant="outlined">
+              cancel
+            </MDButton>
+          </Grid>
         </Grid>
-        <Grid item sm={9}>
-          <Card>
-            <Grid container px={4} pt={2}>
-              <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDTypography variant="body2" color="text" fontWeight="bold">
-                  Template Name
-                </MDTypography>
-              </Grid>
-              <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDTypography variant="body2" color="text" fontWeight="bold">
-                  Description
-                </MDTypography>
-              </Grid>
-            </Grid>
-            <Grid container px={4}>
-              <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-                    setTemplate(e.target.value)
-                  }
-                  value={template}
-                />
-              </Grid>
-              <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-                    setDescription(e.target.value)
-                  }
-                  value={description}
-                />
-              </Grid>
-            </Grid>
-            <Grid container p={4}>
-              <Grid item sm={3}>
-                <MDTypography variant="button" color="text" fontWeight="bold">
-                  Annual CTC *
-                </MDTypography>
-              </Grid>
-              <Grid item sm={9} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                <MDInput
-                  onChange={(e: { target: { value: React.SetStateAction<number> } }) =>
-                    setAnnualctc(e.target.value)
-                  }
-                  value={annualctc}
-                />
-              </Grid>
-            </Grid>
-
-            <DataTable
-              table={dataTableData}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
-            />
-          </Card>
-        </Grid>
-      </Grid>
-      <Grid ml={2} mt={4}>
-        <MDButton color="info" variant="outlined" onClick={handleSubmit}>
-          Save
-        </MDButton>
-      </Grid>
+      </form>
     </DashboardLayout>
   );
 };

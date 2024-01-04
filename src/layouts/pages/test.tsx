@@ -1,392 +1,323 @@
-import { useState, useEffect } from "react";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import MDBox from "components/MDBox";
-import FormField from "layouts/applications/wizard/components/FormField";
-import Checkbox from "@mui/material/Checkbox";
-import { FormControlLabel, Card, Grid } from "@mui/material";
-import { useFormik } from "formik";
-import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
-import MDButton from "components/MDButton";
-import DataTable from "examples/Tables/DataTable";
-import EditIcon from "@mui/icons-material/Edit";
-import Switch from "@mui/material/Switch";
-import { Input, message } from "antd";
-import {
-  TextField,
-  Autocomplete,
-  FormControl,
-  FormLabel,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  // Checkbox,
-  Divider,
-} from "@mui/material";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import Button from "components/MDButton";
 import axios from "axios";
+import Card from "@mui/material/Card";
+import MDBox from "components/MDBox";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import Grid from "@mui/material/Grid";
+import Autocomplete from "@mui/material/Autocomplete";
+import FormField from "layouts/ecommerce/products/new-product/components/FormField";
+import { useEffect, useState } from "react";
+import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
+import React from "react";
 import Cookies from "js-cookie";
-// import form from "layouts/pages/users/new-user/schemas/form";
 const token = Cookies.get("token");
-function CreateEmployee(props: any) {
-  console.log(props?.email, "aaaaaaaaaaaaaa");
-  const [selectedOptions, setSelectedOptions] = useState([]); // State to store selected options
-  const [selecteddeduction, setSelectedDeduction] = useState([]);
-  // const [selectedEarningOptions, setSelectedDeduction] = useState([]);
-  type AllEarningsType = {
-    earning_types: Array<{
-      // Properties of each item in the earning_types array
-      earning_type_name: string;
-      calculation_type: string;
-      // Add other properties as needed
-    }>;
-    pre_tax_deductions: Array<{
-      deduction_with: string;
-      pre_name_slip: string;
-      employee_contribution_ctc: boolean;
-      calculate_prorata_basis: boolean;
-      mark_as_active: boolean;
-      location_name: string;
-    }>;
-    epf_data: Array<{
-      epf_number: string;
-      epf_deduction_cycle: string;
-      employee_contribution_rate: string;
-      employer_contribution_rate: string;
-      employer_contribution_ctc: [];
-      contribution_at_employee_level: string;
-      configuration_lop_applied: [];
-      abry_eligibility: string;
-    }>;
-  };
-  const [basic, setBasic] = useState(0);
-  const [allEarnings, setAllEarnings] = useState<AllEarningsType>({
-    earning_types: [],
-    pre_tax_deductions: [],
-    epf_data: [],
-  });
-  const initialValues: { [key: string]: any } = {
-    template_name: "",
-    template_description: "",
-    annual_ctc: "",
-    employers_contribution: "",
-    pre_tax_name: allEarnings?.pre_tax_deductions?.map((item) => ({
-      pre_tax_id: item.pre_name_slip,
-      calculation_type: "Flat Amount",
-      monthly_amount: "",
-      enter_amount_or_percent: 0,
-    })),
-    earnings_type_name:
-      allEarnings?.earning_types?.map((item: any) => ({
-        earnings_id: item.earning_type_name,
-        calculation_type: item.calculation_type,
-        monthly_amount: "",
-        enter_amount_or_percent: item.enter_amount_or_percent,
-      })) || [],
-    epf: [
-      {
-        epf_id: "",
-        calculation_type: "",
-        monthly_amount: "",
-      },
-    ],
-  };
 
-  const epf = allEarnings.epf_data.length > 0 ? allEarnings.epf_data[0] : null;
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
-    useFormik({
-      initialValues,
-      enableReinitialize: true,
-      onSubmit: async (values, action) => {
-        const updatedEarnings = values.earnings_type_name.map(
-          (
-            earnings: { enter_amount_or_percent: number; calculation_type: string },
-            index: any
-          ) => ({
-            ...earnings,
-            monthly_amount:
-              earnings.calculation_type === "% of CTC"
-                ? parseFloat(
-                    ((values.annual_ctc / 100) * (earnings.enter_amount_or_percent / 12)).toFixed(2)
-                  )
-                : earnings.calculation_type === "Flat Amount"
-                ? parseFloat((earnings.enter_amount_or_percent / 12).toFixed(2))
-                : earnings.calculation_type === "% of Basic"
-                ? parseFloat(((basic / 100) * (earnings.enter_amount_or_percent / 12)).toFixed(2))
-                : null,
-          })
-        );
-        const updateDeduction = values.pre_tax_name.map(
-          (
-            deduction: { enter_amount_or_percent: number; calculation_type: string },
-            index: any
-          ) => ({
-            ...deduction,
-            monthly_amount:
-              deduction.calculation_type === "% of CTC"
-                ? parseFloat(
-                    ((values.annual_ctc / 100) * (deduction.enter_amount_or_percent / 12)).toFixed(
-                      2
-                    )
-                  )
-                : deduction.calculation_type === "Flat Amount"
-                ? parseFloat((deduction.enter_amount_or_percent / 12).toFixed(2))
-                : deduction.calculation_type === "% of Basic"
-                ? parseFloat(((basic / 100) * (deduction.enter_amount_or_percent / 12)).toFixed(2))
-                : null,
-          })
-        );
-        console.log(updatedEarnings, updateDeduction, "ssssssssssssssssss");
-        const postdata = {
-          annual_ctc: values.annual_ctc,
-          earnings_type_name: updatedEarnings,
-
-          pre_tax_name: updateDeduction,
-          employee_email: "mindcom@gmail.com",
-        };
-        console.log(postdata, "asdfghjklmnbbcvgfcxscwtrd");
-        try {
-          const response = await axios.post(
-            "http://10.0.20.133:8000/employee_salary_details",
-            postdata,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          if (response.status === 200) {
-            console.log("Created salary details Successfully");
-            action.resetForm();
-          }
-        } catch (error) {
-          console.error("Error saving data:", error);
-        }
-      },
-    });
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://10.0.20.133:8000/employee_salary_details/combined_data",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.status === 200) {
-          // console.log(response.data, "all earning data");
-          setAllEarnings(response.data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, []);
-  const dataTableData = {
-    columns: [
-      { Header: "SALARY COMPONENTS", accessor: "salary_component", width: "25%" },
-      { Header: "CALCULATION TYPE", accessor: "calculation_type", width: "25%" },
-      { Header: "MONTHLY AMOUNT", accessor: "monthly_amount", width: "25%" },
-      { Header: "ANNUAL AMOUNT", accessor: "annual_amount", width: "25%" },
-    ],
-    rows: [
-      {
-        salary_component: (
-          <MDTypography variant="h6" color="text">
-            EARNINGS
-          </MDTypography>
-        ),
-      },
-      ...values.earnings_type_name.map((earnings: any, index: any) => {
-        return {
-          salary_component: earnings.earnings_id,
-          calculation_type: (
-            <Input
-              addonAfter={earnings.calculation_type}
-              type="number"
-              name={`earnings_type_name[${index}].enter_amount_or_percent`}
-              value={values.earnings_type_name[index]?.enter_amount_or_percent}
-              onChange={handleChange}
-              style={{ width: 150 }}
-            />
-          ),
-          monthly_amount:
-            earnings.calculation_type === "% of CTC"
-              ? parseFloat(
-                  ((values.annual_ctc / 100) * (earnings.enter_amount_or_percent / 12)).toFixed(2)
-                )
-              : earnings.calculation_type === "Flat Amount"
-              ? parseFloat((earnings.enter_amount_or_percent / 12).toFixed(2))
-              : earnings.calculation_type === "% of Basic"
-              ? parseFloat(((basic / 100) * (earnings.enter_amount_or_percent / 12)).toFixed(2))
-              : null,
-          annual_amount:
-            earnings.calculation_type === "% of CTC"
-              ? parseFloat(
-                  ((values.annual_ctc / 100) * (earnings.enter_amount_or_percent / 12)).toFixed(2)
-                ) * 12
-              : earnings.calculation_type === "Flat Amount"
-              ? parseFloat((earnings.enter_amount_or_percent / 12).toFixed(2)) * 12
-              : earnings.calculation_type === "% of Basic"
-              ? parseFloat(((basic / 100) * (earnings.enter_amount_or_percent / 12)).toFixed(2)) *
-                12
-              : null,
-        };
-      }),
-      {
-        salary_component: (
-          <MDTypography variant="h6" color="text">
-            DEDUCTIONS
-          </MDTypography>
-        ),
-      },
-      ...values.pre_tax_name.map((deduction: any, index: any) => {
-        return {
-          salary_component: deduction.pre_tax_id,
-          calculation_type: (
-            <Input
-              addonAfter={deduction.calculation_type}
-              type="number"
-              name={`pre_tax_name[${index}].enter_amount_or_percent`}
-              value={values.pre_tax_name[index]?.enter_amount_or_percent}
-              onChange={handleChange}
-              style={{ width: 150 }}
-            />
-          ),
-          monthly_amount:
-            deduction.calculation_type === "% of CTC"
-              ? parseFloat(
-                  ((values.annual_ctc / 100) * (deduction.enter_amount_or_percent / 12)).toFixed(2)
-                )
-              : deduction.calculation_type === "Flat Amount"
-              ? parseFloat((deduction.enter_amount_or_percent / 12).toFixed(2))
-              : deduction.calculation_type === "% of Basic"
-              ? parseFloat(((basic / 100) * (deduction.enter_amount_or_percent / 12)).toFixed(2))
-              : null,
-          annual_amount:
-            deduction.calculation_type === "% of CTC"
-              ? parseFloat(
-                  (
-                    (values.annual_ctc / 100) *
-                    (deduction.enter_amount_or_percent / 12) *
-                    12
-                  ).toFixed(2)
-                ) * 12
-              : deduction.calculation_type === "Flat Amount"
-              ? parseFloat(((deduction.enter_amount_or_percent / 12) * 12).toFixed(2)) * 12
-              : deduction.calculation_type === "% of Basic"
-              ? parseFloat(
-                  ((basic / 100) * (deduction.enter_amount_or_percent / 12) * 12).toFixed(2)
-                )
-              : null,
-        };
-      }),
-      // ...values.pre_tax_name.map((deduction: any, index: any) => {
-      // return {
-      // salary_component: deduction.pre_tax_id,
-      // calculation_type: (
-      // <Input
-      // // addonAfter={deduction.calculation_type}
-      // type="number"
-      // name={`pre_tax_name[${index}].enter_amount_or_percent`}
-      // value={values.pre_tax_name[index]?.enter_amount_or_percent}
-      // onChange={handleChange}
-      // style={{ width: 150 }}
-      // />
-      // ),
-      // monthly_amount: parseFloat(
-      // (
-      // (values.annual_ctc / 100) *
-      // (values.earnings_type_name[index]?.enter_amount_or_percent / 12)
-      // ).toFixed(2)
-      // ),
-      // annual_amount: parseFloat(
-      // (
-      // (values.annual_ctc / 100) *
-      // (values.earnings_type_name[index]?.enter_amount_or_percent / 12) *
-      // 12
-      // ).toFixed(2)
-      // ),
-      // };
-      // }),
-      {
-        salary_component:
-          epf && epf.employer_contribution_ctc && epf.employer_contribution_ctc.length !== 0
-            ? "EPF - Employer Contribution"
-            : null,
-        calculation_type: epf ? epf.employer_contribution_rate : null,
-        monthly_amount: "",
-      },
-    ],
-  };
-
-  useEffect(() => {
-    values.earnings_type_name.map((earnings: any, index: any) => ({
-      ...earnings,
-      monthly_amount:
-        earnings.calculation_type === "% of CTC"
-          ? (parseFloat(
-              ((values.annual_ctc / 100) * (earnings.enter_amount_or_percent / 12)).toFixed(2)
-            ),
-            setBasic(
-              parseFloat(((values.annual_ctc / 100) * earnings.enter_amount_or_percent).toFixed(2))
-            ))
-          : null,
-    }));
-  }, [values.annual_ctc]);
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <Card sx={{ width: "90%", margin: "auto", mt: "2%" }}>
-        <MDBox p={3}>
-          <Grid item xs={12} sm={9} mb={2}>
-            <MDTypography variant="h5">Salary Details</MDTypography>
-          </Grid>
-          <Grid
-            container
-            spacing={3}
-            // p={2}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Grid item xs={12} sm={4}>
-              <MDTypography variant="button" color="text" fontWeight="bold">
-                Annual CTC *
-              </MDTypography>
-              <FormField
-                type="number"
-                label="Enter Amount"
-                name="annual_ctc"
-                value={values.annual_ctc}
-                variant="outlined"
-                onChange={handleChange}
-              />
-            </Grid>
-          </Grid>
-
-          <DataTable
-            table={dataTableData}
-            isSorted={false}
-            entriesPerPage={false}
-            showTotalEntries={false}
-          />
-          <Grid item xs={12} sm={3} p={3} display="flex" justifyContent="flex-end">
-            <MDButton variant="gradient" color="info" type="submit">
-              {"Save"}
-            </MDButton>
-          </Grid>
-        </MDBox>
-      </Card>
-    </form>
-  );
+const states = [
+  "SELECT STATE",
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Lakshadweep",
+  "Delhi (National Capital Territory of Delhi)",
+  "Puducherry",
+  "Ladakh",
+  "Lakshadweep",
+];
+interface AdditionalSlab {
+  key: number;
+  start_range: number;
+  end_range: number;
+  monthly_tax_amount: number;
 }
 
-export default CreateEmployee;
+interface DataItem {
+  location_name: string;
+  state: string;
+  pt_number: string;
+  deduction_cycle: string;
+  start_range: number[];
+  end_range: number[];
+  monthly_tax_amount: number[];
+}
+
+const Updates = () => {
+  // Create initialSlab based on the matchingState or use an empty array
+  // const initialSlab: AdditionalSlab[] = task.start_range.map((start: any, index: any) => ({
+  //   key: Math.random(),
+  //   start_range: start,
+  //   end_range: task.end_range[index],
+  //   monthly_tax_amount: task.monthly_tax_amount[index],
+  // }));
+
+  // console.log(initialSlab);
+  const removeTaxSlab = (index: number) => {
+    if (additionalSlabs.length > 1) {
+      const updatedSlabs = [...additionalSlabs];
+      updatedSlabs.splice(index, 1);
+      setAdditionalSlabs(updatedSlabs);
+    }
+  };
+
+  const [additionalSlabs, setAdditionalSlabs] = useState([]);
+
+  // Function to add a new set of tax slabs
+  const addTaxSlab = () => {
+    setAdditionalSlabs((prevSlabs) => [
+      ...prevSlabs,
+      {
+        key: Date.now(),
+        start_range: 0,
+        end_range: 0,
+        monthly_tax_amount: 0,
+      },
+    ]);
+  };
+  const handleAdditionalSlabChange = (key: number, field: keyof AdditionalSlab, value: string) => {
+    setAdditionalSlabs((prevSlabs) => {
+      return prevSlabs.map((slab) => {
+        if (slab.key === key) {
+          return {
+            ...slab,
+            [field]: value,
+          };
+        }
+        return slab;
+      });
+    });
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+
+      state: "",
+
+      pt_number: "",
+      deduction_cycle: "",
+    },
+    onSubmit: (values, action) => {
+      //   console.log(values, "values");
+
+      const taxSlabsData = additionalSlabs.map((slab) => ({
+        start_range: slab.start_range,
+        end_range: slab.end_range,
+        monthly_tax_amount: slab.monthly_tax_amount,
+      }));
+      const requestData = {
+        location_name: values.name,
+        pt_number: values.pt_number,
+        deduction_cycle: values.deduction_cycle,
+        start_range: [...taxSlabsData.map((slab) => slab.start_range)],
+        end_range: [...taxSlabsData.map((slab) => slab.end_range)],
+        monthly_tax_amount: [...taxSlabsData.map((slab) => slab.monthly_tax_amount)],
+      };
+
+      axios
+        .put("http://10.0.20.133:8000/professional_tax", requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("it is working", response);
+          //window.location.reload();
+        })
+        .catch((error) => {
+          console.log("error is occurred", error);
+        });
+      console.log(values);
+
+      action.resetForm();
+    },
+  });
+
+  return (
+    <Card>
+      <form onSubmit={formik.handleSubmit}>
+        <MDBox p={4}>
+          <Grid container spacing={2}>
+            <Grid sm={12} mb={2}>
+              <MDInput
+                sx={{ width: "80%" }}
+                // id="email"
+                variant="standard"
+                name="name"
+                label="Work Location"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
+                mb={10}
+                mt={10}
+              />
+            </Grid>
+            <Grid sm={12}>
+              <Autocomplete
+                sx={{ width: "80%" }}
+                onChange={(event, value) => {
+                  formik.handleChange({
+                    target: { name: "state", value },
+                  });
+                }}
+                options={states}
+                renderInput={(params) => (
+                  <FormField
+                    label="States"
+                    InputLabelProps={{ shrink: true }}
+                    name="state"
+                    onChange={formik.handleChange}
+                    value={formik.values.state}
+                    {...params}
+                    variant="outlined"
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid sm={6}>
+              <MDInput
+                sx={{ width: "80%" }}
+                // id="email"
+                variant="standard"
+                name="pt_number"
+                label="PT Number"
+                value={formik.values.pt_number}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.pt_number && Boolean(formik.errors.pt_number)}
+                helperText={formik.touched.pt_number && formik.errors.pt_number}
+              />
+            </Grid>
+
+            <Grid sm={6}>
+              <MDInput
+                sx={{ width: "80%" }}
+                variant="standard"
+                name="deduction_cycle"
+                label="Deduction Cycle"
+                value={formik.values.deduction_cycle}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.deduction_cycle && Boolean(formik.errors.deduction_cycle)}
+                helperText={formik.touched.deduction_cycle && formik.errors.deduction_cycle}
+              />
+            </Grid>
+            <Grid sm={12}>
+              <MDTypography sx={{ fontSize: 14 }} variant="span">
+                Taxes slabs based on
+              </MDTypography>
+
+              <MDTypography sx={{ fontSize: 14, fontWeight: "bold" }} ml={1} variant="span">
+                Monthly Salary
+              </MDTypography>
+            </Grid>
+            <Grid container sx={{ fontSize: 14 }}>
+              <Grid sm={4}>Start Range (₹)</Grid>
+
+              <Grid sm={4}>End Range (₹)</Grid>
+
+              <Grid sm={4}>Monthly Tax Amount (₹)</Grid>
+              {additionalSlabs.map((slab, index) => (
+                <React.Fragment key={slab.key}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                      <MDInput
+                        name={`start_range_${index}`}
+                        value={slab.start_range}
+                        onChange={(e: { target: { value: any } }) =>
+                          handleAdditionalSlabChange(slab.key, "start_range", e.target.value)
+                        }
+                        sx={{ width: "80%" }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <MDInput
+                        name={`end_range_${index}`}
+                        a
+                        value={slab.end_range}
+                        onChange={(e: { target: { value: any } }) =>
+                          handleAdditionalSlabChange(slab.key, "end_range", e.target.value)
+                        }
+                        sx={{ width: "80%" }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <MDInput
+                        name={`monthly_tax_amount_${index}`}
+                        value={slab.monthly_tax_amount}
+                        onChange={(e: { target: { value: any } }) =>
+                          handleAdditionalSlabChange(slab.key, "monthly_tax_amount", e.target.value)
+                        }
+                        sx={{ width: "80%" }}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <MDButton variant="text" color="error" onClick={() => removeTaxSlab(index)}>
+                        Remove Slab
+                      </MDButton>
+                    </Grid>
+                  </Grid>
+                </React.Fragment>
+              ))}
+              <Grid item xs={12}>
+                <MDButton variant="text" color="info" onClick={addTaxSlab}>
+                  + Additional Slabs
+                </MDButton>
+              </Grid>
+            </Grid>
+
+            <Grid mt={3}>
+              <Button color="info" variant="contained" type="submit">
+                Save
+              </Button>
+            </Grid>
+            <Grid ml={2} mt={3}>
+              <Button color="primary" variant="contained">
+                Cancel
+              </Button>
+            </Grid>
+          </Grid>
+        </MDBox>
+      </form>
+    </Card>
+  );
+};
+
+export default Updates;
