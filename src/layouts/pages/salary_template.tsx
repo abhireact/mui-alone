@@ -18,12 +18,14 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import DataTable from "examples/Tables/DataTable";
 import Basic from "layouts/authentication/sign-in/basic";
+import { useNavigate } from "react-router-dom";
 const token = Cookies.get("token");
 import { message } from "antd";
 
 const SalaryTemp = () => {
   const [template, setTemplate] = useState("");
   const [description, setDescription] = useState("");
+  const navigate = useNavigate();
   // EARNINGS
   const [data, setData] = useState([]);
   const [showElements, setShowElements] = useState([]);
@@ -41,20 +43,22 @@ const SalaryTemp = () => {
       }) => {
         if (earning.calculation_type === "% of CTC") {
           const monthly_amount = ((earning.enter_amount_or_percent / 100) * annualctc) / 12;
+          setBasicpercent(earning.enter_amount_or_percent);
           return {
             earning_type_name: earning.earning_type_name,
             calculation_type: earning.calculation_type,
             enter_amount_or_percent: earning.enter_amount_or_percent,
-            monthly_amount: ((earning.enter_amount_or_percent / 100) * annualctc) / 12,
+            monthly_amount: monthly_amount.toFixed(2),
             annual_amount: monthly_amount * 12,
           };
         } else if (earning.calculation_type === "% of Basic") {
-          const monthly_amount = ((earning.enter_amount_or_percent / 100) * basicpercent) / 12;
+          const ctc_amount = ((earning.enter_amount_or_percent / 100) * annualctc) / 12;
+          const monthly_amount = ctc_amount * (basicpercent / 100);
           return {
             earning_type_name: earning.earning_type_name,
             calculation_type: earning.calculation_type,
             enter_amount_or_percent: earning.enter_amount_or_percent,
-            monthly_amount: monthly_amount,
+            monthly_amount: monthly_amount.toFixed(2),
             annual_amount: monthly_amount * 12,
           };
         } else {
@@ -192,6 +196,9 @@ const SalaryTemp = () => {
               <MDInput
                 onChange={(e: { target: { value: any } }) => {
                   handleChange(_index, "enter_amount_or_percent", e.target.value);
+                  // if (row.calculation_type === "% of Basic") {
+                  //   setBasicpercent(showElements[_index].enter_amount_or_percent);
+                  // }
                 }}
                 sx={{ width: "50px" }}
                 // value={showElements[_index].enter_amount_or_percent}
@@ -297,7 +304,8 @@ const SalaryTemp = () => {
       ),
     })),
   };
-  const handleSubmit = () => {
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
     function removeAnnualAmount(data: any[]) {
       return data.map((item: any) => {
         // Create a copy of the object to avoid modifying the original array
@@ -305,7 +313,8 @@ const SalaryTemp = () => {
 
         // Remove the "annual_amount" property
         delete newItem.annual_amount;
-
+        // Converting monthly  amount to string
+        newItem.monthly_amount = Math.round(newItem.monthly_amount).toString();
         return newItem;
       });
     }
@@ -317,7 +326,7 @@ const SalaryTemp = () => {
           template_name: template,
           template_description: description,
           annual_ctc: annualctc,
-          earning_type_name: removeAnnualAmount(showElements),
+          earnings_type_name: removeAnnualAmount(showElements),
           pre_tax_name: removeAnnualAmount(showdeductions),
         },
         {
@@ -508,8 +517,8 @@ const SalaryTemp = () => {
             </MDButton>
           </Grid>
           <Grid item ml={2}>
-            <MDButton color="primary" variant="outlined">
-              cancel
+            <MDButton color="primary" variant="outlined" onClick={() => navigate("")}>
+              Back
             </MDButton>
           </Grid>
         </Grid>

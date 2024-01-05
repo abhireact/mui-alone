@@ -52,6 +52,7 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
+import test1 from "layouts/pages/test1";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
