@@ -79,7 +79,7 @@ const Updates = (props: any) => {
   const { openUpdate, setOpenupdate, task } = props;
   console.log("data ", task);
 
-  // Create initialSlab based on the matchingState or use an empty array
+  // Create initialSlab
   const initialSlab: AdditionalSlab[] = task.start_range.map((start: any, index: any) => ({
     key: Math.random(),
     start_range: start,
@@ -88,13 +88,6 @@ const Updates = (props: any) => {
   }));
 
   console.log(initialSlab);
-  const removeTaxSlab = (index: number) => {
-    if (additionalSlabs.length > 1) {
-      const updatedSlabs = [...additionalSlabs];
-      updatedSlabs.splice(index, 1);
-      setAdditionalSlabs(updatedSlabs);
-    }
-  };
 
   console.log(task, "task");
   const handleCloseupdate = () => {
@@ -102,7 +95,7 @@ const Updates = (props: any) => {
   };
   const [additionalSlabs, setAdditionalSlabs] = useState<AdditionalSlab[]>(initialSlab);
 
-  // Function to add a new set of tax slabs
+  //  add  slab
   const addTaxSlab = () => {
     setAdditionalSlabs((prevSlabs) => [
       ...prevSlabs,
@@ -114,6 +107,15 @@ const Updates = (props: any) => {
       },
     ]);
   };
+  // remove  slab
+  const removeTaxSlab = (index: number) => {
+    if (additionalSlabs.length > 1) {
+      const updatedSlabs = [...additionalSlabs];
+      updatedSlabs.splice(index, 1);
+      setAdditionalSlabs(updatedSlabs);
+    }
+  };
+  // changes in  slab
   const handleAdditionalSlabChange = (key: number, field: keyof AdditionalSlab, value: string) => {
     setAdditionalSlabs((prevSlabs) => {
       return prevSlabs.map((slab) => {

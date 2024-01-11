@@ -12,6 +12,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Addholiday from "./addholiday";
 import Updateholiday from "./updateholiday";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 function transformString(inputString: string): string {
   // Split the input string into an array of substrings
   const substrings = inputString.split("-");
@@ -63,7 +65,7 @@ const Holiday = () => {
         },
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMjE0MDcyfQ.WP23DM78RR5uyY4E5hupWFvjNyZZqT2NpGj9kpTBucA`,
+          Authorization: `Bearer ${token}`,
         },
       });
       if (deletedata) {
@@ -78,7 +80,7 @@ const Holiday = () => {
       .get("http://10.0.20.133:8000/holiday", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMjE0MDcyfQ.WP23DM78RR5uyY4E5hupWFvjNyZZqT2NpGj9kpTBucA`,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {

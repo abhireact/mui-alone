@@ -12,6 +12,8 @@ import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import { TreeSelect } from "antd";
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 
 import FormField from "layouts/ecommerce/products/new-product/components/FormField";
 import { useState, useEffect } from "react";
@@ -75,7 +77,7 @@ const Addholiday = (props: any) => {
       axios.post("http://10.0.20.133:8000/holiday", sendData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvX2lkIjoxLCJlbWFpbCI6IjIwMDNvbTE3MTFAZ21haWwuY29tIiwiZXhwIjoxNzAwMjE0MDcyfQ.WP23DM78RR5uyY4E5hupWFvjNyZZqT2NpGj9kpTBucA`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -86,11 +88,13 @@ const Addholiday = (props: any) => {
     <form onSubmit={handleSubmit}>
       <MDBox p={4}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item sm={4.1}>
+            <MDTypography variant="body2">Name:</MDTypography>
+          </Grid>
+          <Grid item sm={4.1}>
             <MDInput
               variant="standard"
               name="name"
-              label="Name"
               value={values.name}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -100,10 +104,10 @@ const Addholiday = (props: any) => {
               mt={10}
             />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item sm={4.1}>
             <MDTypography variant="body2">From Date:</MDTypography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item sm={4.1}>
             <MDInput
               type="date"
               variant="standard"
@@ -116,10 +120,10 @@ const Addholiday = (props: any) => {
               mb={10}
             />
           </Grid>
-          <Grid item xs={3.01}>
+          <Grid item sm={4.1}>
             <MDTypography variant="body2">To Date: </MDTypography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item sm={4.1}>
             <MDInput
               type="date"
               variant="standard"
@@ -132,17 +136,19 @@ const Addholiday = (props: any) => {
               mb={10}
             />
           </Grid>
-          {/* <Grid item xs={6}>
+          {/* <Grid item sm={4.1}>
               <MDTypography variant="body1">Applicable For</MDTypography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item sm={4.1}>
               <TreeSelect {...tProps} />
             </Grid> */}
-          <Grid item xs={12}>
+          <Grid item sm={4.1}>
+            <MDTypography variant="body2">Description:</MDTypography>
+          </Grid>
+          <Grid item sm={4.1}>
             <MDInput
               variant="standard"
               name="description"
-              label="Description..."
               value={values.description}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -151,11 +157,11 @@ const Addholiday = (props: any) => {
               mb={10}
               mt={10}
               multiline
-              rows={5}
+              rows={3}
             />
           </Grid>
-          <Grid item xs={12}>
-            <Grid container justifyContent="flex-start">
+          <Grid item sm={12}>
+            <Grid container justifyContent="center">
               <Grid item>
                 <MDButton
                   color="info"

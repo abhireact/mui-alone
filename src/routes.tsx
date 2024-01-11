@@ -77,7 +77,7 @@ import Holiday from "layouts/pages/holiday/showholiday";
 import Showemp from "layouts/employees/showemp";
 import Showrole from "layouts/pages/roles_crud/show_role";
 import Form from "layouts/pages/form16/form16";
-import SalaryTemp from "layouts/pages/salary_template";
+import SalaryTemp from "layouts/pages/salarytemplate/salary_template";
 const routes = [
   {
     type: "collapse",
