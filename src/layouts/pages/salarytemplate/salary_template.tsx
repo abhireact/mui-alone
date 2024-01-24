@@ -154,18 +154,18 @@ const SalaryTemp = () => {
           }
         );
         if (response.status === 200) {
-          setBasicpercent(response.data.earning_types[1].enter_amount_or_percent);
+          setBasicpercent(response.data.earning_types[0].enter_amount_or_percent);
           console.log(
-            Number(response.data.earning_types[1].enter_amount_or_percent),
+            Number(response.data.earning_types[0].enter_amount_or_percent),
             "basic percent"
           );
           console.log(response.data, " api data");
           const transformarray = transformEarningsArray(response.data.earning_types);
 
-          setData(transformEarningsArray(transformarray.slice(2, 4)));
-          console.log(transformEarningsArray(transformarray.slice(2, 4)), " transform api data");
-          setShowElements([transformarray[1]]);
-          setBasicpercent(transformarray[1].enter_amount_or_percent);
+          setData(transformEarningsArray(transformarray.slice(1, 4)));
+          console.log(transformEarningsArray(transformarray.slice(1, 4)), " transform api data");
+          setShowElements([transformarray[0]]);
+          setBasicpercent(transformarray[0].enter_amount_or_percent);
           console.log(showElements, "default element");
           console.log(response.data.pre_tax_deductions, " deduction api data ");
           console.log(
