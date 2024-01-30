@@ -162,7 +162,6 @@ const Worklocations = () => {
           "http://10.0.20.133:8000/worklocation",
           {
             location_name: values.name,
-
             add_line1: values.address_line1,
             add_line2: values.address_line2,
             pincode: values.pincode,
