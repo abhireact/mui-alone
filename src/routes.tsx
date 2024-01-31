@@ -78,6 +78,8 @@ import Showemp from "layouts/employees/showemp";
 import Showrole from "layouts/pages/roles_crud/show_role";
 import Form from "layouts/pages/form16/form16";
 import SalaryTemp from "layouts/pages/salarytemplate/salary_template";
+import CompanySetup from "layouts/pages/hospital/companysetup";
+import ClientInfo from "layouts/pages/hospital/clientinfo";
 const routes = [
   {
     type: "collapse",
@@ -180,6 +182,18 @@ const routes = [
         name: "INTERNSHIP",
         key: "intern",
         collapse: [
+          {
+            name: "Company Setup",
+            key: "companysetup",
+            route: "/pages/intern/companysetup",
+            component: <CompanySetup />,
+          },
+          {
+            name: "Client Info",
+            key: "clientinfo",
+            route: "/pages/intern/clientinfo",
+            component: <ClientInfo />,
+          },
           {
             name: "Form16",
             key: "form16",
