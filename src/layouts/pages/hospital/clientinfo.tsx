@@ -184,6 +184,105 @@ const Test = () => {
             >
               <MDBox p={4} px={8}>
                 <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDTypography variant="h5" py={2}>
+                    Profile Pic
+                  </MDTypography>
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDDropzone options={{ addRemoveLinks: true }} />
+                  {/* <MDAvatar bgColor="dark" size="xxl">
+                    <AccountCircleIcon fontSize="large" />
+                  </MDAvatar> */}
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDTypography variant="h5" py={2}>
+                    Identity Details
+                  </MDTypography>
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-center" }}>
+                  <Autocomplete
+                    sx={{ width: "100%" }}
+                    onChange={(event, value) => {
+                      handleChange({
+                        target: { name: "document_type", value },
+                      });
+                    }}
+                    options={document_types}
+                    renderInput={(params: any) => (
+                      <FormField
+                        label="Document Type"
+                        InputLabelProps={{ shrink: true }}
+                        name="document_type"
+                        onChange={handleChange}
+                        value={values.document_type}
+                        {...params}
+                        variant="outlined"
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDInput
+                    variant="standard"
+                    name="document_no"
+                    label="Document No"
+                    value={values.document_no}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.document_no && Boolean(errors.document_no)}
+                    helperText={touched.document_no && errors.document_no}
+                    mb={10}
+                  />
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDTypography variant="h5" py={2}>
+                    Anniversary
+                  </MDTypography>
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDTypography variant="body2">Date of Birth : </MDTypography>
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDInput
+                    sx={{ width: "100%" }}
+                    variant="standard"
+                    type="date"
+                    name="dob"
+                    value={values.dob}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.dob && Boolean(errors.dob)}
+                    helperText={touched.dob && errors.dob}
+                    mb={10}
+                  />
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDTypography variant="body2">Anniversary : </MDTypography>
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDInput
+                    sx={{ width: "100%" }}
+                    variant="standard"
+                    type="date"
+                    name="anniversary"
+                    value={values.anniversary}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.anniversary && Boolean(errors.anniversary)}
+                    helperText={touched.anniversary && errors.anniversary}
+                    mb={10}
+                  />
+                </Grid>
+              </MDBox>
+            </Grid>
+            <Grid
+              sm={4}
+              container
+              spacing={4}
+              sx={{ display: "flex", justifyContent: "flex-start" }}
+            >
+              <MDBox p={4} px={8}>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
                   <MDTypography variant="h5" pt={2}>
                     Client Details
                   </MDTypography>
@@ -330,105 +429,7 @@ const Test = () => {
                 </Grid>
               </MDBox>
             </Grid>
-            <Grid
-              sm={4}
-              container
-              spacing={4}
-              sx={{ display: "flex", justifyContent: "flex-start" }}
-            >
-              <MDBox p={4} px={8}>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <MDTypography variant="h5" py={2}>
-                    Profile Pic
-                  </MDTypography>
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                  <MDDropzone options={{ addRemoveLinks: true }} />
-                  {/* <MDAvatar bgColor="dark" size="xxl">
-                    <AccountCircleIcon fontSize="large" />
-                  </MDAvatar> */}
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <MDTypography variant="h5" py={2}>
-                    Identity Details
-                  </MDTypography>
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-center" }}>
-                  <Autocomplete
-                    sx={{ width: "100%" }}
-                    onChange={(event, value) => {
-                      handleChange({
-                        target: { name: "document_type", value },
-                      });
-                    }}
-                    options={document_types}
-                    renderInput={(params: any) => (
-                      <FormField
-                        label="Document Type"
-                        InputLabelProps={{ shrink: true }}
-                        name="document_type"
-                        onChange={handleChange}
-                        value={values.document_type}
-                        {...params}
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <MDInput
-                    variant="standard"
-                    name="document_no"
-                    label="Document No"
-                    value={values.document_no}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.document_no && Boolean(errors.document_no)}
-                    helperText={touched.document_no && errors.document_no}
-                    mb={10}
-                  />
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <MDTypography variant="h5" py={2}>
-                    Anniversary
-                  </MDTypography>
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <MDTypography variant="body2">Date of Birth : </MDTypography>
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <MDInput
-                    sx={{ width: "100%" }}
-                    variant="standard"
-                    type="date"
-                    name="dob"
-                    value={values.dob}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.dob && Boolean(errors.dob)}
-                    helperText={touched.dob && errors.dob}
-                    mb={10}
-                  />
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <MDTypography variant="body2">Anniversary : </MDTypography>
-                </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <MDInput
-                    sx={{ width: "100%" }}
-                    variant="standard"
-                    type="date"
-                    name="anniversary"
-                    value={values.anniversary}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.anniversary && Boolean(errors.anniversary)}
-                    helperText={touched.anniversary && errors.anniversary}
-                    mb={10}
-                  />
-                </Grid>
-              </MDBox>
-            </Grid>
+
             <Grid sm={4} container spacing={4} sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={4} px={8}>
                 <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
