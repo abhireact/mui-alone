@@ -16,13 +16,17 @@ import MDDropzone from "components/MDDropzone";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
 import { FormControlLabel, FormLabel, RadioGroup } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import MDAvatar from "components/MDAvatar";
 const token = Cookies.get("token");
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Divider from "@mui/material/Divider";
 import CardActions from "@mui/material/CardActions";
 import Checkbox from "@mui/material/Checkbox";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+
 //import {ChangeEvent} from "react";
 
 // const validationSchema = yup.object({
@@ -36,9 +40,14 @@ import Checkbox from "@mui/material/Checkbox";
 
 let initialValues = {
   secure_access: "",
-  state: "",
+  stock_sale: "",
+  allow_task: "",
+  defaultunit: "",
+  identifier: "",
+  inventory_valuation: "",
+  enable: "",
+  price: "",
 };
-const inventory = ["Serial No.", "Batch No.", "Bar Code", "Pan No."];
 
 const Test = () => {
   const [formdata, setFormdata] = useState("create");
@@ -136,44 +145,48 @@ const Test = () => {
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox px={2}>
                 <Paper>
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <MDTypography variant="body1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
-                    </MDTypography>
-                  </Grid>
-                  <Grid sm={12}>
-                    <MDTypography variant="subtitle2" px={2}>
-                      Select default unit of measurement which suits your business most
-                    </MDTypography>
-                  </Grid>
-                  <CardActions>
-                    <Autocomplete
-                      sx={{ width: "50%", paddingLeft: 2 }}
-                      onChange={(event, value) => {
-                        handleChange({
-                          target: { name: "state", value },
-                        });
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Default Unit/UoM
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
                       }}
-                      options={inventory}
-                      renderInput={(params: any) => (
-                        <FormField
-                          label="identifier"
-                          InputLabelProps={{ shrink: true }}
-                          name="state"
+                    >
+                      {" "}
+                      <MDTypography variant="subtitle2" p={2}>
+                        Select default unit of measurement which suits your business most
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} py={2}>
+                      <FormControl sx={{ m: 1, minWidth: 70 }}>
+                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                        <Select
+                          labelId="demo-simple-select-autowidth-label"
+                          id="demo-simple-select-autowidth"
+                          value={values.defaultunit}
                           onChange={handleChange}
-                          value={values.state}
-                          {...params}
-                          variant="outlined"
-                        />
-                      )}
-                    />
-                  </CardActions>
+                          autoWidth={true}
+                          name="defaultunit"
+                        >
+                          <MenuItem value="">
+                            <em>chooose default unit </em>
+                          </MenuItem>
+                          <MenuItem value={10}>Bar Code</MenuItem>
+                          <MenuItem value={21}>Part No.</MenuItem>
+                          <MenuItem value={22}>Batch No.</MenuItem>
+                          <MenuItem value={22}>QR Code</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
                 </Paper>
               </MDBox>
             </Grid>
@@ -181,230 +194,278 @@ const Test = () => {
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox px={2}>
                 <Paper>
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <MDTypography variant="body1" fontWeight="bold" px={2}>
-                      Inventory Identifier
-                    </MDTypography>
-                  </Grid>
-                  <Grid sm={12}>
-                    <MDTypography variant="subtitle2" px={2}>
-                      Select type of number used in inventory identification
-                    </MDTypography>
-                  </Grid>
-                  <CardActions>
-                    <Autocomplete
-                      sx={{ width: "50%", paddingLeft: 2 }}
-                      onChange={(event, value) => {
-                        handleChange({
-                          target: { name: "state", value },
-                        });
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Inventory Identifier
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
                       }}
-                      options={inventory}
-                      renderInput={(params: any) => (
-                        <FormField
-                          label="identifier"
-                          InputLabelProps={{ shrink: true }}
-                          name="state"
+                    >
+                      {" "}
+                      <MDTypography variant="subtitle2" p={2}>
+                        Select type of number used in inventory identification
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} py={2}>
+                      <FormControl sx={{ m: 1, minWidth: 70 }}>
+                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                        <Select
+                          labelId="demo-simple-select-autowidth-label"
+                          id="demo-simple-select-autowidth"
+                          value={values.identifier}
                           onChange={handleChange}
-                          value={values.state}
-                          {...params}
-                          variant="outlined"
-                        />
-                      )}
-                    />
-                  </CardActions>
+                          autoWidth={true}
+                          name="identifier"
+                        >
+                          <MenuItem value="">
+                            <em>chooose inventory identifier </em>
+                          </MenuItem>
+                          <MenuItem value={10}>Bar Code</MenuItem>
+                          <MenuItem value={21}>Part No.</MenuItem>
+                          <MenuItem value={22}>Batch No.</MenuItem>
+                          <MenuItem value={22}>QR Code</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
                 </Paper>
               </MDBox>
             </Grid>
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox px={2}>
                 <Paper>
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <MDTypography variant="body1" fontWeight="bold" px={2}>
-                      Inventory Valuation
-                    </MDTypography>
-                  </Grid>
-                  <Grid sm={12}>
-                    <MDTypography variant="subtitle2" px={2}>
-                      Select Inventory valuation method as per your accounting practice
-                    </MDTypography>
-                  </Grid>
-                  <CardActions>
-                    <Autocomplete
-                      sx={{ width: "50%", paddingLeft: 2 }}
-                      onChange={(event, value) => {
-                        handleChange({
-                          target: { name: "state", value },
-                        });
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Inventory Valuation
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
                       }}
-                      options={inventory}
-                      renderInput={(params: any) => (
-                        <FormField
-                          label="identifier"
-                          InputLabelProps={{ shrink: true }}
-                          name="state"
+                    >
+                      {" "}
+                      <MDTypography variant="subtitle2" p={2}>
+                        Select Inventory valuation method as per your accounting practice
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} py={2}>
+                      <FormControl sx={{ m: 1, minWidth: 70 }}>
+                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                        <Select
+                          labelId="demo-simple-select-autowidth-label"
+                          id="demo-simple-select-autowidth"
+                          value={values.inventory_valuation}
                           onChange={handleChange}
-                          value={values.state}
-                          {...params}
-                          variant="outlined"
-                        />
-                      )}
-                    />
-                  </CardActions>
-                </Paper>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Paper>
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <MDTypography variant="body1" fontWeight="bold" px={2}>
-                      Enable Manufacturing
-                    </MDTypography>
-                    <Checkbox
-                      checked={values.secure_access.includes("Fullday")}
-                      onChange={handleChange}
-                      name="secure_access"
-                      value="Fullday"
-                    />
-                  </Grid>
-                  <Grid sm={12}>
-                    <MDTypography variant="subtitle2" p={2}>
-                      Allows you to create bill of materials and add assembled items in stock
-                    </MDTypography>
-                  </Grid>
-                </Paper>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Paper>
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <MDTypography variant="body1" fontWeight="bold" px={2}>
-                      Secure Access
-                    </MDTypography>
-                    <Checkbox
-                      checked={values.secure_access.includes("Fullday")}
-                      onChange={handleChange}
-                      name="secure_access"
-                      value="Fullday"
-                    />
-                  </Grid>
-                  <Grid sm={12}>
-                    <MDTypography variant="subtitle2" p={2}>
-                      Ask for username and password at the startup
-                    </MDTypography>
-                  </Grid>
-                  <Grid sm={12} px={2} sx={{ display: "flex", justifyContent: "flex-end" }}></Grid>
-                </Paper>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Paper>
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <MDTypography variant="body1" fontWeight="bold" px={2}>
-                      Negative Stock Sale
-                    </MDTypography>
-                    <Checkbox
-                      checked={values.secure_access.includes("Fullday")}
-                      onChange={handleChange}
-                      name="secure_access"
-                      value="Fullday"
-                    />
-                  </Grid>
-                  <Grid sm={12}>
-                    <MDTypography variant="subtitle2" p={2}>
-                      Allows you to do billing in case of negative stock
-                    </MDTypography>
-                  </Grid>
-                </Paper>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={1}>
-                <Paper>
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <MDTypography variant="body1" fontWeight="bold" px={2}>
-                      Allows Task Confirmation
-                    </MDTypography>
-                    <Checkbox
-                      checked={values.secure_access.includes("Fullday")}
-                      onChange={handleChange}
-                      name="secure_access"
-                      value="Fullday"
-                    />
-                  </Grid>
-                  <Grid sm={12}>
-                    <MDTypography variant="subtitle2" px={2} pb={1}>
-                      Allows application to ask for confirmation before completing important tasks
-                    </MDTypography>
+                          autoWidth={true}
+                          name="inventory_valuation"
+                        >
+                          <MenuItem value="">
+                            <em>chooose inventory valuation </em>
+                          </MenuItem>
+                          <MenuItem value={10}>Bar Code</MenuItem>
+                          <MenuItem value={21}>Part No.</MenuItem>
+                          <MenuItem value={22}>Batch No.</MenuItem>
+                          <MenuItem value={22}>QR Code</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </Grid>
                 </Paper>
               </MDBox>
             </Grid>
 
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2} pt={1}>
-                <Paper>
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <MDTypography variant="body1" fontWeight="bold" px={2}>
-                      Price Catalog
-                    </MDTypography>
-
-                    <Checkbox
-                      checked={values.secure_access.includes("Fullday")}
-                      onChange={handleChange}
-                      name="secure_access"
-                      value="Fullday"
-                    />
+              <MDBox p={2}>
+                <Paper style={{ height: "100%" }}>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Secure Access
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="subtitle2" p={2}>
+                        Ask for username and password at the startup
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.secure_access.includes("Fullday")}
+                        onChange={handleChange}
+                        name="secure_access"
+                        value="Fullday"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid sm={12}>
-                    <MDTypography variant="subtitle2" px={2} pb={1}>
-                      Allows you to add multiple sale prices for the same item
-                    </MDTypography>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper style={{ height: "100%" }}>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Negative Stock Sale
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="subtitle2" p={2}>
+                        Allows you to do billing in case of negative stock
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.stock_sale.includes("Fullday")}
+                        onChange={handleChange}
+                        name="stock_sale"
+                        value="Fullday"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Allows Task Confirmation
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="subtitle2" p={2}>
+                        Implement user confirmation for critical actions in the application.
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.allow_task.includes("Fullday")}
+                        onChange={handleChange}
+                        name="allow_task"
+                        value="Fullday"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox px={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Enable Manufacturing
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="subtitle2" p={2}>
+                        Allows you to create bill of materials and add assembled items in stock
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.enable.includes("Fullday")}
+                        onChange={handleChange}
+                        name="enable"
+                        value="Fullday"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox px={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Price Catalog
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="subtitle2" p={2}>
+                        Allows you to add multiple sale prices for the same item
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.price.includes("Fullday")}
+                        onChange={handleChange}
+                        name="price"
+                        value="Fullday"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
                   </Grid>
                 </Paper>
               </MDBox>
