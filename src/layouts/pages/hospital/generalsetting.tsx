@@ -21,7 +21,8 @@ import MDAvatar from "components/MDAvatar";
 const token = Cookies.get("token");
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Divider from "@mui/material/Divider";
-
+import CardActions from "@mui/material/CardActions";
+import Checkbox from "@mui/material/Checkbox";
 //import {ChangeEvent} from "react";
 
 // const validationSchema = yup.object({
@@ -33,38 +34,15 @@ import Divider from "@mui/material/Divider";
 //     .required("Password is required"),
 // });
 
-const document_types = [
-  "Aadhar Paper",
-  "PAN Paper",
-  "Driving License",
-  "Government ID",
-  "Voter Paper",
-];
 let initialValues = {
-  fullname: "",
-  billing_address: "",
-  city: "",
+  secure_access: "",
   state: "",
-  pincode: "",
-  country: "",
-  email_id: "",
-  phone_no: "",
-  contact_no: "",
-  pan_no: "",
-  gstin: "",
-  account_type: "",
-  opening_balance: "",
-  document_type: "",
-  document_no: "",
-  dob: "",
-  anniversary: "",
-  credit_allowed: "",
-  credit_limit: "",
-  remark_or_note: "",
 };
+const inventory = ["Serial No.", "Batch No.", "Bar Code", "Pan No."];
 
 const Test = () => {
   const [formdata, setFormdata] = useState("create");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -134,7 +112,6 @@ const Test = () => {
       console.error(error);
     }
   };
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -157,12 +134,8 @@ const Test = () => {
             </Grid>
 
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
+              <MDBox px={2}>
+                <Paper>
                   <Grid
                     sm={12}
                     sx={{
@@ -170,31 +143,44 @@ const Test = () => {
                       justifyContent: "flex-start",
                     }}
                   >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
+                    <MDTypography variant="body1" fontWeight="bold" px={2}>
                       Default Unit/UoM
                     </MDTypography>
                   </Grid>
-                  <Grid
-                    sm={6}
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
-                    }}
-                  >
-                    <MDTypography variant="subtitle2" p={2}>
-                      General Settings
+                  <Grid sm={12}>
+                    <MDTypography variant="subtitle2" px={2}>
+                      Select default unit of measurement which suits your business most
                     </MDTypography>
                   </Grid>
+                  <CardActions>
+                    <Autocomplete
+                      sx={{ width: "50%", paddingLeft: 2 }}
+                      onChange={(event, value) => {
+                        handleChange({
+                          target: { name: "state", value },
+                        });
+                      }}
+                      options={inventory}
+                      renderInput={(params: any) => (
+                        <FormField
+                          label="identifier"
+                          InputLabelProps={{ shrink: true }}
+                          name="state"
+                          onChange={handleChange}
+                          value={values.state}
+                          {...params}
+                          variant="outlined"
+                        />
+                      )}
+                    />
+                  </CardActions>
                 </Paper>
               </MDBox>
-              <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
+            </Grid>
+
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox px={2}>
+                <Paper>
                   <Grid
                     sm={12}
                     sx={{
@@ -202,31 +188,43 @@ const Test = () => {
                       justifyContent: "flex-start",
                     }}
                   >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
+                    <MDTypography variant="body1" fontWeight="bold" px={2}>
+                      Inventory Identifier
                     </MDTypography>
                   </Grid>
-                  <Grid
-                    sm={6}
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
-                    }}
-                  >
-                    <MDTypography variant="subtitle2" p={2}>
-                      General Settings
+                  <Grid sm={12}>
+                    <MDTypography variant="subtitle2" px={2}>
+                      Select type of number used in inventory identification
                     </MDTypography>
                   </Grid>
+                  <CardActions>
+                    <Autocomplete
+                      sx={{ width: "50%", paddingLeft: 2 }}
+                      onChange={(event, value) => {
+                        handleChange({
+                          target: { name: "state", value },
+                        });
+                      }}
+                      options={inventory}
+                      renderInput={(params: any) => (
+                        <FormField
+                          label="identifier"
+                          InputLabelProps={{ shrink: true }}
+                          name="state"
+                          onChange={handleChange}
+                          value={values.state}
+                          {...params}
+                          variant="outlined"
+                        />
+                      )}
+                    />
+                  </CardActions>
                 </Paper>
               </MDBox>
-              <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
+            </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox px={2}>
+                <Paper>
                   <Grid
                     sm={12}
                     sx={{
@@ -234,21 +232,63 @@ const Test = () => {
                       justifyContent: "flex-start",
                     }}
                   >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
+                    <MDTypography variant="body1" fontWeight="bold" px={2}>
+                      Inventory Valuation
                     </MDTypography>
                   </Grid>
+                  <Grid sm={12}>
+                    <MDTypography variant="subtitle2" px={2}>
+                      Select Inventory valuation method as per your accounting practice
+                    </MDTypography>
+                  </Grid>
+                  <CardActions>
+                    <Autocomplete
+                      sx={{ width: "50%", paddingLeft: 2 }}
+                      onChange={(event, value) => {
+                        handleChange({
+                          target: { name: "state", value },
+                        });
+                      }}
+                      options={inventory}
+                      renderInput={(params: any) => (
+                        <FormField
+                          label="identifier"
+                          InputLabelProps={{ shrink: true }}
+                          name="state"
+                          onChange={handleChange}
+                          value={values.state}
+                          {...params}
+                          variant="outlined"
+                        />
+                      )}
+                    />
+                  </CardActions>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
                   <Grid
-                    sm={6}
-                    container
+                    sm={12}
                     sx={{
                       display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
+                      justifyContent: "space-between",
                     }}
                   >
+                    <MDTypography variant="body1" fontWeight="bold" px={2}>
+                      Enable Manufacturing
+                    </MDTypography>
+                    <Checkbox
+                      checked={values.secure_access.includes("Fullday")}
+                      onChange={handleChange}
+                      name="secure_access"
+                      value="Fullday"
+                    />
+                  </Grid>
+                  <Grid sm={12}>
                     <MDTypography variant="subtitle2" p={2}>
-                      General Settings
+                      Allows you to create bill of materials and add assembled items in stock
                     </MDTypography>
                   </Grid>
                 </Paper>
@@ -256,195 +296,114 @@ const Test = () => {
             </Grid>
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
+                <Paper>
                   <Grid
                     sm={12}
                     sx={{
                       display: "flex",
-                      justifyContent: "flex-start",
+                      justifyContent: "space-between",
                     }}
                   >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
+                    <MDTypography variant="body1" fontWeight="bold" px={2}>
+                      Secure Access
                     </MDTypography>
+                    <Checkbox
+                      checked={values.secure_access.includes("Fullday")}
+                      onChange={handleChange}
+                      name="secure_access"
+                      value="Fullday"
+                    />
                   </Grid>
-                  <Grid
-                    sm={6}
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
-                    }}
-                  >
+                  <Grid sm={12}>
                     <MDTypography variant="subtitle2" p={2}>
-                      General Settings
+                      Ask for username and password at the startup
                     </MDTypography>
                   </Grid>
+                  <Grid sm={12} px={2} sx={{ display: "flex", justifyContent: "flex-end" }}></Grid>
                 </Paper>
               </MDBox>
+            </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
+                <Paper>
                   <Grid
                     sm={12}
                     sx={{
                       display: "flex",
-                      justifyContent: "flex-start",
+                      justifyContent: "space-between",
                     }}
                   >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
+                    <MDTypography variant="body1" fontWeight="bold" px={2}>
+                      Negative Stock Sale
                     </MDTypography>
+                    <Checkbox
+                      checked={values.secure_access.includes("Fullday")}
+                      onChange={handleChange}
+                      name="secure_access"
+                      value="Fullday"
+                    />
                   </Grid>
-                  <Grid
-                    sm={6}
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
-                    }}
-                  >
+                  <Grid sm={12}>
                     <MDTypography variant="subtitle2" p={2}>
-                      General Settings
-                    </MDTypography>
-                  </Grid>
-                </Paper>
-              </MDBox>
-              <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
-                    </MDTypography>
-                  </Grid>
-                  <Grid
-                    sm={6}
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
-                    }}
-                  >
-                    <MDTypography variant="subtitle2" p={2}>
-                      General Settings
+                      Allows you to do billing in case of negative stock
                     </MDTypography>
                   </Grid>
                 </Paper>
               </MDBox>
             </Grid>
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
+              <MDBox p={1}>
+                <Paper>
                   <Grid
                     sm={12}
                     sx={{
                       display: "flex",
-                      justifyContent: "flex-start",
+                      justifyContent: "space-between",
                     }}
                   >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
+                    <MDTypography variant="body1" fontWeight="bold" px={2}>
+                      Allows Task Confirmation
                     </MDTypography>
+                    <Checkbox
+                      checked={values.secure_access.includes("Fullday")}
+                      onChange={handleChange}
+                      name="secure_access"
+                      value="Fullday"
+                    />
                   </Grid>
-                  <Grid
-                    sm={6}
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
-                    }}
-                  >
-                    <MDTypography variant="subtitle2" p={2}>
-                      General Settings
+                  <Grid sm={12}>
+                    <MDTypography variant="subtitle2" px={2} pb={1}>
+                      Allows application to ask for confirmation before completing important tasks
                     </MDTypography>
                   </Grid>
                 </Paper>
               </MDBox>
-              <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
+            </Grid>
+
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2} pt={1}>
+                <Paper>
                   <Grid
                     sm={12}
                     sx={{
                       display: "flex",
-                      justifyContent: "flex-start",
+                      justifyContent: "space-between",
                     }}
                   >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
+                    <MDTypography variant="body1" fontWeight="bold" px={2}>
+                      Price Catalog
                     </MDTypography>
+
+                    <Checkbox
+                      checked={values.secure_access.includes("Fullday")}
+                      onChange={handleChange}
+                      name="secure_access"
+                      value="Fullday"
+                    />
                   </Grid>
-                  <Grid
-                    sm={6}
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
-                    }}
-                  >
-                    <MDTypography variant="subtitle2" p={2}>
-                      General Settings
-                    </MDTypography>
-                  </Grid>
-                </Paper>
-              </MDBox>
-              <MDBox p={2}>
-                <Paper
-                  sx={{
-                    width: "150%",
-                  }}
-                >
-                  <Grid
-                    sm={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <MDTypography variant="subtitle1" fontWeight="bold" px={2}>
-                      Default Unit/UoM
-                    </MDTypography>
-                  </Grid>
-                  <Grid
-                    sm={6}
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "50%",
-                    }}
-                  >
-                    <MDTypography variant="subtitle2" p={2}>
-                      General Settings
+                  <Grid sm={12}>
+                    <MDTypography variant="subtitle2" px={2} pb={1}>
+                      Allows you to add multiple sale prices for the same item
                     </MDTypography>
                   </Grid>
                 </Paper>
