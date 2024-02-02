@@ -78,9 +78,11 @@ import Showemp from "layouts/employees/showemp";
 import Showrole from "layouts/pages/roles_crud/show_role";
 import Form from "layouts/pages/form16/form16";
 import SalaryTemp from "layouts/pages/salarytemplate/salary_template";
-import CompanySetup from "layouts/pages/hospital/companysetup";
+import CompanySetup from "layouts/pages/hospital/viewcompany";
+import CreateCompany from "layouts/pages/hospital/companysetup";
 import ClientInfo from "layouts/pages/hospital/clientinfo";
 import GeneralSetting from "layouts/pages/hospital/generalsetting";
+import TaxationSetting from "layouts/pages/hospital/taxationsetting";
 const routes = [
   {
     type: "collapse",
@@ -184,6 +186,12 @@ const routes = [
         key: "intern",
         collapse: [
           {
+            name: "Taxation Setting",
+            key: "taxationsetting",
+            route: "/pages/intern/taxationsetting",
+            component: <TaxationSetting />,
+          },
+          {
             name: "General Setting",
             key: "generalsetting",
             route: "/pages/intern/generalsetting",
@@ -194,6 +202,12 @@ const routes = [
             key: "companysetup",
             route: "/pages/intern/companysetup",
             component: <CompanySetup />,
+          },
+          {
+            name: " Create Company Setup",
+            key: "createcompany",
+            route: "/pages/intern/createcompany",
+            component: <CreateCompany />,
           },
           {
             name: "Client Info",

@@ -14,6 +14,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import MDTypography from "components/MDTypography";
 import MDDropzone from "components/MDDropzone";
 import { useState, useEffect } from "react";
+import { message } from "antd";
 
 const token = Cookies.get("token");
 //import {ChangeEvent} from "react";
@@ -64,30 +65,45 @@ const states = [
   "Ladakh",
   "Lakshadweep",
 ];
-let initialValues = {
-  businessname: "",
-  address: "",
-  city: "",
-  state: "",
-  pincode: "",
-  country: "",
-  email: "",
-  phone: "",
-  pan_no: "",
-  gstin: "",
-  taxation_method: "",
-};
+
 const taxation_methods = ["Not Applicable", "GST", "Composition Scheme"];
 const Test = () => {
-  // const [file, setFile] = useState<string | undefined>();
-
-  // function handleImage(e: ChangeEvent<HTMLInputElement>): void {
-  //   if (e.target.files) {
-  //     console.log(e.target.files);
-  //     setFile(URL.createObjectURL(e.target.files[0]));
-  //   }
-  // }
+  const [formData, setFormData] = useState({
+    businessname: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+    email: "",
+    phone: "",
+    pan_no: "",
+    gstin: "",
+    taxation_method: "",
+    company_logo: "",
+    signature: "",
+  });
+  const handleChange = (e: { target: { name: any; value: any } }) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  const handleFileChange = (e: { target: { files: any[] } }) => {
+    setFormData({
+      ...formData,
+      company_logo: e.target.files[0],
+    });
+  };
+  const handleFilesChange = (e: { target: { files: any[] } }) => {
+    setFormData({
+      ...formData,
+      signature: e.target.files[0],
+    });
+  };
   const [formdata, setFormdata] = useState("create");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -99,7 +115,7 @@ const Test = () => {
         });
         if (response.status === 200) {
           console.log(response.data);
-          initialValues = response.data[0];
+          setFormData(response.data[0]);
           setFormdata("edit");
         }
       } catch (error) {
@@ -108,56 +124,63 @@ const Test = () => {
       }
     };
     fetchData();
-  });
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
-    useFormik({
-      initialValues,
-      // validationSchema: validationSchema,
-      enableReinitialize: true,
-      onSubmit: async (values, action) => {
-        if (formdata === "create") {
-          handleFormSubmit();
-        } else {
-          handleFormEditSubmit();
-        }
-      },
-    });
-  const handleFormSubmit = async () => {
-    console.log({ ...values }, "submit values");
-    try {
-      let sendData = values;
+  }, []);
 
-      const response = await axios.post("", sendData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  // const handleImage1 = (event: { target: { files: any[] } }) => {
+  //   const file = event.target.files[0];
+  //   setSendData({ ...formData, company_logo: file });
+  // };
+
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    const formDataObj = new FormData();
+
+    formDataObj.append("businessname", formData.businessname);
+    formDataObj.append("address", formData.address);
+    formDataObj.append("city", formData.city);
+    formDataObj.append("state", formData.state);
+    formDataObj.append("pincode", formData.pincode);
+    formDataObj.append("country", formData.country);
+    formDataObj.append("email", formData.email);
+    formDataObj.append("phone", formData.phone);
+    formDataObj.append("pan_no", formData.pan_no);
+    formDataObj.append("gstin", formData.gstin);
+    formDataObj.append("taxation_method", formData.taxation_method);
+    formDataObj.append("company_logo", formData.company_logo);
+    formDataObj.append("signature", formData.signature);
+
+    try {
+      const response = await axios.post("http://10.0.20.121:8000/company", formDataObj);
+
       if (response.status === 200) {
-        console.log("Created Successfully");
+        const data = response.data;
+        console.log(data, "data getting ");
+        message.success("Company created");
+        setFormData({
+          businessname: "",
+          address: "",
+          city: "",
+          state: "",
+          pincode: "",
+          country: "",
+          email: "",
+          phone: "",
+          pan_no: "",
+          gstin: "",
+          taxation_method: "",
+          company_logo: "",
+          signature: "",
+        });
+        // Handle success, show message, redirect, etc.
+      } else {
+        // Handle errors
+        console.error("Error:", response.statusText);
+        message.error("something wrong happened or fill all details ");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error:");
     }
   };
-  const handleFormEditSubmit = async () => {
-    try {
-      let sendData = values;
-
-      const response = await axios.put(``, sendData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 200) {
-        console.log("Edited Successfully");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -167,7 +190,7 @@ const Test = () => {
             <Grid sm={6} container spacing={4} sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={4} px={8}>
                 <Grid sm={12}>
-                  <MDTypography variant="h5" p={3}>
+                  <MDTypography variant="h5" py={3}>
                     Customer Details
                   </MDTypography>
                 </Grid>
@@ -179,13 +202,9 @@ const Test = () => {
                     variant="standard"
                     name="businessname"
                     label="Business Name"
-                    value={values.businessname}
+                    value={formData.businessname}
                     onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.businessname && Boolean(errors.businessname)}
-                    helperText={touched.businessname && errors.businessname}
                     mb={10}
-                    mt={10}
                   />
                 </Grid>
                 <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
@@ -197,12 +216,21 @@ const Test = () => {
                     name="address"
                     label="Address"
                     type="address"
-                    value={values.address}
+                    value={formData.address}
                     onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.address && Boolean(errors.address)}
-                    helperText={touched.address && errors.address}
                     mb={10}
+                  />
+                </Grid>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDInput
+                    autoComplete="off"
+                    variant="standard"
+                    name="pincode"
+                    label="Pin Code"
+                    value={formData.pincode}
+                    onChange={handleChange}
+                    mb={10}
+                    mt={10}
                   />
                 </Grid>
                 <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
@@ -212,18 +240,15 @@ const Test = () => {
                     variant="standard"
                     name="city"
                     label="City"
-                    value={values.city}
+                    value={formData.city}
                     onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.city && Boolean(errors.city)}
-                    helperText={touched.city && errors.city}
                     mb={10}
                     mt={10}
                   />
                 </Grid>
                 <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                   <Autocomplete
-                    sx={{ width: "70%" }}
+                    sx={{ width: "100%" }}
                     onChange={(event, value) => {
                       handleChange({
                         target: { name: "state", value },
@@ -236,7 +261,7 @@ const Test = () => {
                         InputLabelProps={{ shrink: true }}
                         name="state"
                         onChange={handleChange}
-                        value={values.state}
+                        value={formData.state}
                         {...params}
                         variant="outlined"
                       />
@@ -248,11 +273,8 @@ const Test = () => {
                     variant="standard"
                     name="country"
                     label="Country"
-                    value={values.country}
-                    // onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.country && Boolean(errors.country)}
-                    helperText={touched.country && errors.country}
+                    value={formData.country}
+                    onChange={handleChange}
                     mb={10}
                   />
                 </Grid>
@@ -261,11 +283,8 @@ const Test = () => {
                     variant="standard"
                     name="email"
                     label="email"
-                    value={values.email}
+                    value={formData.email}
                     onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.email && Boolean(errors.email)}
-                    helperText={touched.email && errors.email}
                     mb={10}
                   />
                 </Grid>
@@ -275,49 +294,71 @@ const Test = () => {
                     variant="standard"
                     name="phone"
                     label="Phone No."
-                    value={values.phone}
+                    value={formData.phone}
                     onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.phone && Boolean(errors.phone)}
-                    helperText={touched.phone && errors.phone}
                     mb={10}
                   />
                 </Grid>
+              </MDBox>
+            </Grid>
+
+            <Grid
+              sm={6}
+              container
+              spacing={4}
+              sx={{ display: "flex", justifyContent: "flex-start" }}
+            >
+              <MDBox p={4} px={8}>
                 <Grid sm={12}>
-                  <MDTypography variant="h5" p={3}>
+                  <MDTypography variant="h5" py={3}>
+                    Company Logo
+                  </MDTypography>
+                  <div>
+                    <MDInput type="file" accept="image/*" onChange={handleFileChange} />
+                  </div>
+                </Grid>
+                <Grid sm={12}>
+                  <MDTypography variant="h5" py={3}>
+                    Signature
+                  </MDTypography>
+                  <div>
+                    <MDInput type="file" accept="image/*" onChange={handleFilesChange} />
+                  </div>
+                  {/* <div className="App">
+                    <h2>Add Image:</h2>
+                    <input type="file" onChange={handleImage} />
+                    <img src={file} alt="Uploaded Preview" />
+                  </div> */}
+                </Grid>
+                <Grid sm={12}>
+                  <MDTypography variant="h5" py={3}>
                     Other Details
                   </MDTypography>
                 </Grid>
 
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-center" }}>
                   <MDInput
                     variant="standard"
                     name="pan_no"
                     label="PAN No."
-                    value={values.pan_no}
+                    value={formData.pan_no}
                     onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.pan_no && Boolean(errors.pan_no)}
-                    helperText={touched.pan_no && errors.pan_no}
                     mb={10}
                   />
                 </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-center" }}>
                   <MDInput
                     variant="standard"
                     name="gstin"
                     label="GSTIN"
-                    value={values.gstin}
+                    value={formData.gstin}
                     onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.gstin && Boolean(errors.gstin)}
-                    helperText={touched.gstin && errors.gstin}
                     mb={10}
                   />
                 </Grid>
-                <Grid sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-center" }}>
                   <Autocomplete
-                    sx={{ width: "100%" }}
+                    sx={{ width: "60%" }}
                     onChange={(event, value) => {
                       handleChange({
                         target: { name: "taxation_method", value },
@@ -330,40 +371,14 @@ const Test = () => {
                         InputLabelProps={{ shrink: true }}
                         name="taxation_method"
                         onChange={handleChange}
-                        value={values.taxation_method}
+                        value={formData.taxation_method}
                         {...params}
                         variant="outlined"
                       />
                     )}
                   />
                 </Grid>
-              </MDBox>
-            </Grid>
-            <Grid
-              sm={6}
-              container
-              spacing={4}
-              sx={{ display: "flex", justifyContent: "flex-start" }}
-            >
-              <MDBox p={4} px={8}>
-                <Grid sm={12}>
-                  <MDTypography variant="h5" p={3}>
-                    Company Logo
-                  </MDTypography>
-                  <MDDropzone options={{ addRemoveLinks: true }} />
-                </Grid>
-                <Grid sm={12}>
-                  <MDTypography variant="h5" p={3}>
-                    Signature
-                  </MDTypography>
-                  <MDDropzone options={{ addRemoveLinks: true }} />
-                  {/* <div className="App">
-                    <h2>Add Image:</h2>
-                    <input type="file" onChange={handleImage} />
-                    <img src={file} alt="Uploaded Preview" />
-                  </div> */}
-                </Grid>
-                <Grid sm={4} p={12}>
+                <Grid sm={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <MDButton color="info" variant="outlined" type="submit">
                     Submit
                   </MDButton>

@@ -14,7 +14,7 @@ const validationSchema = yup.object({
 
   password: yup
     .string()
-    .min(8, "Password should be of minimum 8 characters length")
+    .min(4, "Password should be of minimum 8 characters length")
     .required("Password is required"),
 });
 
@@ -28,7 +28,7 @@ const Logintest = () => {
     onSubmit: (values, action) => {
       axios
         .post(
-          "http://10.0.20.133:8000/login",
+          "http://10.0.20.121:8000/login",
           {
             username: values.username,
             password: values.password,

@@ -26,6 +26,7 @@ import Checkbox from "@mui/material/Checkbox";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { s } from "@fullcalendar/core/internal-common";
 
 //import {ChangeEvent} from "react";
 
@@ -37,47 +38,15 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 //     .min(8, "Password should be of minimum 8 characters length")
 //     .required("Password is required"),
 // });
-const unitOptions = [
-  "UNT",
-  "TON",
-  "TBS",
-  "SQY",
-  "SQM",
-  "SQF",
-  "SET",
-  "ROL",
-  "QTL",
-  "PCS",
-  "PAC",
-  "NOS",
-  "MTR",
-  "MLT",
-  "KLR",
-  "KGS",
-  "GMS",
-  "DOZ",
-  "CTN",
-  "CMS",
-  "CCM",
-  "CBM",
-  "CAN",
-  "BUN",
-  "BTL",
-  "BOX",
-  "BKL",
-  "BDL",
-  "BAL",
-  "BAG",
-];
+
 let initialValues = {
-  secure_access: false,
-  stock_sale: false,
-  allow_task: false,
-  defaultunit: "",
-  identifier: "",
-  inventory_valuation: "",
-  enable: false,
-  price: false,
+  enable_cess: false,
+  tax_change: false,
+  shipping_cess: "",
+  apparel_slab_limit: "",
+  apparel_slab_percent: "",
+  footwear_slab_limit: "",
+  footwear_slab_percent: "",
 };
 
 const Test = () => {
@@ -177,7 +146,7 @@ const Test = () => {
                   borderBottom: "2px solid #3873E8",
                 }}
               >
-                General Settings
+                Taxation Settings
               </MDTypography>
             </Grid>
 
@@ -188,7 +157,7 @@ const Test = () => {
                     <Grid sm={12}>
                       {" "}
                       <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Default Unit/UoM
+                        Enable Cess
                       </MDTypography>
                     </Grid>
                     <Grid
@@ -201,158 +170,14 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Select default unit of measurement which suits your business most
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
-                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                        <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.defaultunit}
-                          onChange={handleChange}
-                          autoWidth={true}
-                          name="defaultunit"
-                        >
-                          <MenuItem value="">
-                            <em>Choose default unit</em>
-                          </MenuItem>
-                          {unitOptions.map((unit) => (
-                            <MenuItem key={unit} value={unit}>
-                              {unit}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Paper>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Inventory Valuation
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Select Inventory valuation method as per your accounting practice
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
-                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                        <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.inventory_valuation}
-                          onChange={handleChange}
-                          autoWidth={true}
-                          name="inventory_valuation"
-                        >
-                          <MenuItem value="">
-                            <em>chooose inventory valuation </em>
-                          </MenuItem>
-                          <MenuItem value={"AVCO"}>AVCO</MenuItem>
-                          <MenuItem value={"FIFO"}>FIFO</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Paper style={{ height: "100%" }}>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Inventory Identifier
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Select type of number used in inventory identification
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
-                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                        <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.identifier}
-                          onChange={handleChange}
-                          autoWidth={true}
-                          name="identifier"
-                        >
-                          <MenuItem value="">
-                            <em>chooose inventory identifier </em>
-                          </MenuItem>
-                          <MenuItem value={"hi"}>Bar Code</MenuItem>
-                          <MenuItem value={"hello"}>Part No.</MenuItem>
-                          <MenuItem value={22}>Batch No.</MenuItem>
-                          <MenuItem value={22}>QR Code</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              </MDBox>
-            </Grid>
-
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Paper style={{ height: "100%" }}>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Secure Access
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Ask for username and password at the startup
+                        Enable additional cess on items, You can deine cess rate in item master
                       </MDTypography>
                     </Grid>
                     <Grid sm={3} p={2}>
                       <Checkbox
-                        checked={values.secure_access}
+                        checked={values.enable_cess}
                         onChange={handleChange}
-                        name="secure_access"
+                        name="enable_cess"
                         sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
@@ -362,12 +187,12 @@ const Test = () => {
             </Grid>
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
-                <Paper style={{ height: "100%" }}>
+                <Paper>
                   <Grid container spacing={1} p={2}>
                     <Grid sm={12}>
                       {" "}
                       <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Negative Stock Sale
+                        Shipping Cess
                       </MDTypography>
                     </Grid>
                     <Grid
@@ -380,14 +205,55 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Allows you to do billing in case of negative stock
+                        Enter cess changed on shipping/freight/transport cost
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <MDInput
+                        variant="standard"
+                        name="shipping_cess"
+                        label="₹"
+                        type="shipping_cess"
+                        value={values.shipping_cess}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.shipping_cess && Boolean(errors.shipping_cess)}
+                        helperText={touched.shipping_cess && errors.shipping_cess}
+                        mb={10}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Allow Item Tax Change
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Allows you to tax change tax rate at the time of entering sale and purchases
                       </MDTypography>
                     </Grid>
                     <Grid sm={3} p={2}>
                       <Checkbox
-                        checked={values.stock_sale}
+                        checked={values.tax_change}
                         onChange={handleChange}
-                        name="stock_sale"
+                        name="tax_change"
                       />
                     </Grid>
                   </Grid>
@@ -402,7 +268,7 @@ const Test = () => {
                     <Grid sm={12}>
                       {" "}
                       <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Allows Task Confirmation
+                        Apparel Slab
                       </MDTypography>
                     </Grid>
                     <Grid
@@ -413,16 +279,32 @@ const Test = () => {
                         borderRight: "2px solid #3873E8",
                       }}
                     >
-                      {" "}
                       <MDTypography variant="caption" p={2}>
-                        Implement user confirmation for critical actions in the application.
+                        Enter apparel slab limit and tax percentage (if applicable)
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
-                      <Checkbox
-                        checked={values.allow_task}
+                    <Grid sm={3} px={2}>
+                      <MDInput
+                        variant="standard"
+                        name="apparel_slab_limit"
+                        label="₹"
+                        type="apparel_slab_limit"
+                        value={values.apparel_slab_limit}
                         onChange={handleChange}
-                        name="allow_task"
+                        onBlur={handleBlur}
+                        error={touched.apparel_slab_limit && Boolean(errors.apparel_slab_limit)}
+                        helperText={touched.apparel_slab_limit && errors.apparel_slab_limit}
+                      />
+                      <MDInput
+                        variant="standard"
+                        name="apparel_slab_percent"
+                        label="%"
+                        type="apparel_slab_percent"
+                        value={values.apparel_slab_percent}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.apparel_slab_percent && Boolean(errors.apparel_slab_percent)}
+                        helperText={touched.apparel_slab_percent && errors.apparel_slab_percent}
                       />
                     </Grid>
                   </Grid>
@@ -431,13 +313,13 @@ const Test = () => {
             </Grid>
 
             <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox px={2}>
+              <MDBox p={2}>
                 <Paper>
                   <Grid container spacing={1} p={2}>
                     <Grid sm={12}>
                       {" "}
                       <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Enable Manufacturing
+                        Footwear Slab
                       </MDTypography>
                     </Grid>
                     <Grid
@@ -450,41 +332,34 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Allows you to create bill of materials and add assembled items in stock
+                        Enter footwear slab limit and tax percentage (if applicable )
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
-                      <Checkbox checked={values.enable} onChange={handleChange} name="enable" />
-                    </Grid>
-                  </Grid>
-                </Paper>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox px={2}>
-                <Paper>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Price Catalog
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Allows you to add multiple sale prices for the same item
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} p={2}>
-                      <Checkbox checked={values.price} onChange={handleChange} name="price" />
+                    <Grid sm={3} px={2}>
+                      <MDInput
+                        variant="standard"
+                        name="footwear_slab_limit"
+                        label=" ₹"
+                        type="footwear_slab_limit"
+                        value={values.footwear_slab_limit}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.footwear_slab_limit && Boolean(errors.footwear_slab_limit)}
+                        helperText={touched.footwear_slab_limit && errors.footwear_slab_limit}
+                      />
+                      <MDInput
+                        variant="standard"
+                        name="footwear_slab_percent"
+                        label=" %"
+                        type="footwear_slab_percent"
+                        value={values.footwear_slab_percent}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={
+                          touched.footwear_slab_percent && Boolean(errors.footwear_slab_percent)
+                        }
+                        helperText={touched.footwear_slab_percent && errors.footwear_slab_percent}
+                      />
                     </Grid>
                   </Grid>
                 </Paper>
