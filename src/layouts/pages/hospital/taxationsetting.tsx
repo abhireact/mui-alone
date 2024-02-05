@@ -1,44 +1,33 @@
 import MDInput from "components/MDInput";
 import { useFormik } from "formik";
-import * as yup from "yup";
 import axios from "axios";
 import Paper from "@mui/material/Paper";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import Cookies from "js-cookie";
-import MDButton from "components/MDButton";
 import Grid from "@mui/material/Grid";
-import FormField from "layouts/ecommerce/products/new-product/components/FormField";
-import Autocomplete from "@mui/material/Autocomplete";
 import MDTypography from "components/MDTypography";
-import MDDropzone from "components/MDDropzone";
-import Radio from "@mui/material/Radio";
-import FormControl from "@mui/material/FormControl";
-import { FormControlLabel, FormLabel, RadioGroup } from "@mui/material";
-import { useEffect, useState } from "react";
-import MDAvatar from "components/MDAvatar";
-const token = Cookies.get("token");
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Divider from "@mui/material/Divider";
-import CardActions from "@mui/material/CardActions";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Checkbox from "@mui/material/Checkbox";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { s } from "@fullcalendar/core/internal-common";
 
-//import {ChangeEvent} from "react";
+const token = Cookies.get("token");
 
-// const validationSchema = yup.object({
-//   username: yup.string().min(2).max(25).required("Please enter your name"),
+function debounce<T extends (...args: any[]) => any>(func: T, delay: number) {
+  let timeout: ReturnType<typeof setTimeout>;
 
-//   password: yup
-//     .string()
-//     .min(8, "Password should be of minimum 8 characters length")
-//     .required("Password is required"),
-// });
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
+    const context = this;
 
+    const later = function () {
+      timeout = null as any;
+      func.apply(context, args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, delay);
+  };
+}
 let initialValues = {
   enable_cess: false,
   tax_change: false,
@@ -51,11 +40,16 @@ let initialValues = {
 
 const Test = () => {
   const [formdata, setFormdata] = useState("create");
+  const tosubmit = useRef(false);
+  const debouncedSubmit = useCallback(
+    debounce((submitFunction) => submitFunction(), 1000),
+    []
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("", {
+        const response = await axios.get("http://10.0.20.121:8000/taxationsettings", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -73,28 +67,25 @@ const Test = () => {
     };
     fetchData();
   }, []);
-  useEffect(() => {
-    handleFormSubmit;
-  }, [onchange]);
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
-    useFormik({
-      initialValues,
-      // validationSchema: validationSchema,
-      enableReinitialize: true,
-      onSubmit: async (values, action) => {
-        if (formdata === "create") {
-          handleFormSubmit();
-        } else {
-          handleFormEditSubmit();
-        }
-      },
-    });
+
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
+    initialValues,
+    // validationSchema: validationSchema,
+    enableReinitialize: true,
+    onSubmit: async () => {
+      if (formdata === "create") {
+        handleFormSubmit();
+      } else {
+        handleFormEditSubmit();
+      }
+    },
+  });
   const handleFormSubmit = async () => {
     console.log({ ...values }, "submit values");
     try {
       let sendData = values;
 
-      const response = await axios.post("", sendData, {
+      const response = await axios.post("http://10.0.20.121:8000/taxationsettings", sendData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -111,7 +102,7 @@ const Test = () => {
     try {
       let sendData = values;
 
-      const response = await axios.put(``, sendData, {
+      const response = await axios.put(`http://10.0.20.121:8000/taxationsettings`, sendData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -124,11 +115,15 @@ const Test = () => {
       console.error(error);
     }
   };
-
   useEffect(() => {
-    // Trigger handleSubmit whenever form values change
-    handleSubmit();
-  }, [values]);
+    if (tosubmit.current) {
+      // Trigger handleSubmit whenever form values change
+      debouncedSubmit(() => handleSubmit());
+    } else {
+      // Set tosubmit.current to true to allow the effect to run on subsequent changes
+      tosubmit.current = true;
+    }
+  }, [values, tosubmit.current]);
   return (
     <DashboardLayout>
       <DashboardNavbar />

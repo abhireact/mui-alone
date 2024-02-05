@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
 import axios from "axios";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import imagecontent from "../practiceimages/company.jpeg";
 import { message } from "antd";
 import Cookies from "js-cookie";
+import MDTypography from "components/MDTypography";
 const token = Cookies.get("token");
 
 const Company = () => {
@@ -43,22 +42,25 @@ const Company = () => {
             <img
               src={"http://" + image1}
               alt="Company Logo"
-              // style={{ width: "100%", height: "200px", objectFit: "cover" }}
+              style={{
+                width: "100%",
+                height: "40%",
+                objectFit: "cover",
+              }}
             />
 
             <div
               style={{
                 position: "absolute",
-                top: "50%",
+                top: "20%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
-                width: "100%",
                 textAlign: "center",
               }}
             >
-              <Typography variant="h4" align="center" style={{ color: "white" }}>
+              <MDTypography variant="h4" align="center" style={{ color: "white" }}>
                 Company Name
-              </Typography>
+              </MDTypography>
             </div>
           </Card>
         </Grid>
@@ -66,15 +68,18 @@ const Company = () => {
         <Grid item xs={12}>
           <Card>
             <Grid container spacing={2} style={{ padding: "20px" }}>
-              <Grid item xs={6} sm={3}>
-                <Typography variant="h5">Business Name:</Typography>
-                <Typography variant="body1">{/* Business Name from data */}</Typography>
+              <Grid item xs={12} sm={6}>
+                <MDTypography variant="h5">Address</MDTypography>
+                <MDTypography variant="body1">address name</MDTypography>
+                <MDTypography variant="body1">pincode city state </MDTypography>
+                <MDTypography variant="body1">country </MDTypography>
               </Grid>
-              <Grid item xs={6} sm={3}>
-                <Typography variant="h5">Address:</Typography>
-                <Typography variant="body1">{/* Address from data */}</Typography>
+
+              <Grid item xs={12} sm={6}>
+                <MDTypography variant="h5">Contact Us</MDTypography>
+                <MDTypography variant="body1">phone no</MDTypography>
+                <MDTypography variant="body1">email</MDTypography>
               </Grid>
-              {/* Add similar Grid items for other information */}
             </Grid>
           </Card>
         </Grid>

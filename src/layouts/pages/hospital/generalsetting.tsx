@@ -16,9 +16,9 @@ import MDDropzone from "components/MDDropzone";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
 import { FormControlLabel, FormLabel, RadioGroup } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MDAvatar from "components/MDAvatar";
-const token = Cookies.get("token");
+
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Divider from "@mui/material/Divider";
 import CardActions from "@mui/material/CardActions";
@@ -26,6 +26,7 @@ import Checkbox from "@mui/material/Checkbox";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+const token = Cookies.get("token");
 
 //import {ChangeEvent} from "react";
 
@@ -71,22 +72,41 @@ const unitOptions = [
 ];
 let initialValues = {
   secure_access: false,
-  stock_sale: false,
-  allow_task: false,
-  defaultunit: "",
-  identifier: "",
+  negative_stock_sale: false,
+  allow_task_confirmation: false,
+  default_unit: "",
+  inventory_identifier: "",
   inventory_valuation: "",
-  enable: false,
-  price: false,
+  enable_manufacturing: false,
+  price_catalog: false,
 };
+function debounce<T extends (...args: any[]) => any>(func: T, delay: number) {
+  let timeout: ReturnType<typeof setTimeout>;
 
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
+    const context = this;
+
+    const later = function () {
+      timeout = null as any;
+      func.apply(context, args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, delay);
+  };
+}
 const Test = () => {
   const [formdata, setFormdata] = useState("create");
+  const tosubmit = useRef(false);
+  const debouncedSubmit = useCallback(
+    debounce((submitFunction) => submitFunction(), 1000),
+    []
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("", {
+        const response = await axios.get("http://10.0.20.121:8000/generalsettings", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -94,7 +114,7 @@ const Test = () => {
         });
         if (response.status === 200) {
           console.log(response.data);
-          initialValues = response.data[0];
+          initialValues = response.data;
           setFormdata("edit");
         }
       } catch (error) {
@@ -104,28 +124,25 @@ const Test = () => {
     };
     fetchData();
   }, []);
-  useEffect(() => {
-    handleFormSubmit;
-  }, [onchange]);
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
-    useFormik({
-      initialValues,
-      // validationSchema: validationSchema,
-      enableReinitialize: true,
-      onSubmit: async (values, action) => {
-        if (formdata === "create") {
-          handleFormSubmit();
-        } else {
-          handleFormEditSubmit();
-        }
-      },
-    });
+
+  const { values, handleChange, handleSubmit } = useFormik({
+    initialValues,
+    // validationSchema: validationSchema,
+    enableReinitialize: true,
+    onSubmit: async () => {
+      if (formdata === "create") {
+        handleFormSubmit();
+      } else {
+        handleFormEditSubmit();
+      }
+    },
+  });
   const handleFormSubmit = async () => {
     console.log({ ...values }, "submit values");
     try {
       let sendData = values;
 
-      const response = await axios.post("", sendData, {
+      const response = await axios.post("http://10.0.20.121:8000/generalsettings", sendData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -142,7 +159,7 @@ const Test = () => {
     try {
       let sendData = values;
 
-      const response = await axios.put(``, sendData, {
+      const response = await axios.put(`http://10.0.20.121:8000/generalsettings`, sendData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -155,11 +172,15 @@ const Test = () => {
       console.error(error);
     }
   };
-
   useEffect(() => {
-    // Trigger handleSubmit whenever form values change
-    handleSubmit();
-  }, [values]);
+    if (tosubmit.current) {
+      // Trigger handleSubmit whenever form values change
+      debouncedSubmit(() => handleSubmit());
+    } else {
+      // Set tosubmit.current to true to allow the effect to run on subsequent changes
+      tosubmit.current = true;
+    }
+  }, [values, tosubmit.current]);
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -210,10 +231,10 @@ const Test = () => {
                         <Select
                           labelId="demo-simple-select-autowidth-label"
                           id="demo-simple-select-autowidth"
-                          value={values.defaultunit}
+                          value={values.default_unit}
                           onChange={handleChange}
                           autoWidth={true}
-                          name="defaultunit"
+                          name="default_unit"
                         >
                           <MenuItem value="">
                             <em>Choose default unit</em>
@@ -305,10 +326,10 @@ const Test = () => {
                         <Select
                           labelId="demo-simple-select-autowidth-label"
                           id="demo-simple-select-autowidth"
-                          value={values.identifier}
+                          value={values.inventory_identifier}
                           onChange={handleChange}
                           autoWidth={true}
-                          name="identifier"
+                          name="inventory_identifier"
                         >
                           <MenuItem value="">
                             <em>chooose inventory identifier </em>
@@ -385,9 +406,9 @@ const Test = () => {
                     </Grid>
                     <Grid sm={3} p={2}>
                       <Checkbox
-                        checked={values.stock_sale}
+                        checked={values.negative_stock_sale}
                         onChange={handleChange}
-                        name="stock_sale"
+                        name="negative_stock_sale"
                       />
                     </Grid>
                   </Grid>
@@ -420,9 +441,9 @@ const Test = () => {
                     </Grid>
                     <Grid sm={3} p={2}>
                       <Checkbox
-                        checked={values.allow_task}
+                        checked={values.allow_task_confirmation}
                         onChange={handleChange}
-                        name="allow_task"
+                        name="allow_task_confirmation"
                       />
                     </Grid>
                   </Grid>
@@ -454,7 +475,11 @@ const Test = () => {
                       </MDTypography>
                     </Grid>
                     <Grid sm={3} p={2}>
-                      <Checkbox checked={values.enable} onChange={handleChange} name="enable" />
+                      <Checkbox
+                        checked={values.enable_manufacturing}
+                        onChange={handleChange}
+                        name="enable_manufacturing"
+                      />
                     </Grid>
                   </Grid>
                 </Paper>
@@ -484,7 +509,11 @@ const Test = () => {
                       </MDTypography>
                     </Grid>
                     <Grid sm={3} p={2}>
-                      <Checkbox checked={values.price} onChange={handleChange} name="price" />
+                      <Checkbox
+                        checked={values.price_catalog}
+                        onChange={handleChange}
+                        name="price_catalog"
+                      />
                     </Grid>
                   </Grid>
                 </Paper>

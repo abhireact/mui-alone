@@ -1,559 +1,470 @@
-import React, { useEffect, useState, useRef } from "react";
+import MDInput from "components/MDInput";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import axios from "axios";
+import Paper from "@mui/material/Paper";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import MDButton from "components/MDButton";
 import MDBox from "components/MDBox";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import AddIcon from "@mui/icons-material/Add";
 import Cookies from "js-cookie";
-import axios from "axios";
+import MDButton from "components/MDButton";
 import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
+import FormField from "layouts/ecommerce/products/new-product/components/FormField";
+import Autocomplete from "@mui/material/Autocomplete";
 import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
-import DataTable from "examples/Tables/DataTable";
-import Basic from "layouts/authentication/sign-in/basic";
-import { useNavigate } from "react-router-dom";
+import MDDropzone from "components/MDDropzone";
+import Radio from "@mui/material/Radio";
+import FormControl from "@mui/material/FormControl";
+import { FormControlLabel, FormLabel, RadioGroup } from "@mui/material";
+import { useCallback, useEffect, useRef, useState } from "react";
+import MDAvatar from "components/MDAvatar";
+
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Divider from "@mui/material/Divider";
+import CardActions from "@mui/material/CardActions";
+import Checkbox from "@mui/material/Checkbox";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 const token = Cookies.get("token");
-import { message } from "antd";
 
-const SalaryTemp = (props: any) => {
-  const { openupdate, setOpenupdate, editdata } = props;
+//import {ChangeEvent} from "react";
 
-  const [template, setTemplate] = useState(editdata?.template_name);
-  const handleCloseupdate = () => {
-    setOpenupdate(false);
+// const validationSchema = yup.object({
+//   username: yup.string().min(2).max(25).required("Please enter your name"),
+
+//   password: yup
+//     .string()
+//     .min(8, "Password should be of minimum 8 characters length")
+//     .required("Password is required"),
+// });
+const unitOptions = [
+  "UNT",
+  "TON",
+  "TBS",
+  "SQY",
+  "SQM",
+  "SQF",
+  "SET",
+  "ROL",
+  "QTL",
+  "PCS",
+  "PAC",
+  "NOS",
+  "MTR",
+  "MLT",
+  "KLR",
+  "KGS",
+  "GMS",
+  "DOZ",
+  "CTN",
+  "CMS",
+  "CCM",
+  "CBM",
+  "CAN",
+  "BUN",
+  "BTL",
+  "BOX",
+  "BKL",
+  "BDL",
+  "BAL",
+  "BAG",
+];
+let initialValues = {
+  secure_access: false,
+  negative_stock_sale: false,
+  allow_task_confirmation: false,
+  default_unit: "",
+  inventory_identifier: "",
+  inventory_valuation: "",
+  enable_manufacturing: false,
+  price_catalog: false,
+};
+function debounce<T extends (...args: any[]) => any>(func: T, delay: number) {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
+    const context = this;
+
+    const later = function () {
+      timeout = null as any;
+      func.apply(context, args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, delay);
   };
-  const [description, setDescription] = useState(editdata?.template_description);
-  const navigate = useNavigate();
-  // EARNINGS
-  const [data, setData] = useState([]);
-  const [showElements, setShowElements] = useState([]);
-  const [annualamount, setAnnualamount] = useState([]);
-  const [annualctc, setAnnualctc] = useState(Number(editdata?.annual_ctc));
-  const [basicpercent, setBasicpercent] = useState(0);
-
-  function transformEarningsArray(earningsArray: any[]) {
-    return earningsArray.map(
-      (earning: {
-        monthly_amount: number;
-        earning_type_name: any;
-        calculation_type: any;
-        enter_amount_or_percent: any;
-      }) => {
-        if (earning.calculation_type === "% of CTC") {
-          const monthly_amount = ((earning.enter_amount_or_percent / 100) * annualctc) / 12;
-          setBasicpercent(earning.enter_amount_or_percent);
-          return {
-            earning_type_name: earning.earning_type_name,
-            calculation_type: earning.calculation_type,
-            enter_amount_or_percent: earning.enter_amount_or_percent,
-            monthly_amount: monthly_amount.toFixed(2),
-            annual_amount: monthly_amount * 12,
-          };
-        } else if (earning.calculation_type === "% of Basic") {
-          const ctc_amount = ((earning.enter_amount_or_percent / 100) * annualctc) / 12;
-          const monthly_amount = ctc_amount * (basicpercent / 100);
-          return {
-            earning_type_name: earning.earning_type_name,
-            calculation_type: earning.calculation_type,
-            enter_amount_or_percent: earning.enter_amount_or_percent,
-            monthly_amount: monthly_amount.toFixed(2),
-            annual_amount: monthly_amount * 12,
-          };
-        } else {
-          // Handle other calculation types if needed
-
-          return {
-            earning_type_name: earning.earning_type_name,
-            calculation_type: earning.calculation_type,
-            enter_amount_or_percent: earning.enter_amount_or_percent,
-            monthly_amount: earning.monthly_amount || 0,
-            annual_amount: earning.monthly_amount * 12 || 0,
-          };
-        }
-      }
-    );
-  }
-  // DEDUCTIONS
-  const [datadeduction, setDatadeduction] = useState([]);
-  const [showdeductions, setShowdeductions] = useState([]);
-
-  function transformDeductionsArray(deductionsArray: any[]) {
-    return deductionsArray.map(
-      (deduction: { monthly_amount: number; pre_name_slip: any; calculation_type: any }) => {
-        const monthly_amount = deduction.monthly_amount || 0;
-        return {
-          pre_name_slip: deduction.pre_name_slip,
-          calculation_type: deduction.calculation_type || "Fixed Amount",
-
-          monthly_amount: monthly_amount,
-          annual_amount: monthly_amount * 12,
-        };
-      }
-    );
-  }
-  // EARNING CHANGES
-
-  const handleChange = (index: any, field: any, value: any) => {
-    // Update the state with the modified data
-    const updatedElements = [...showElements];
-    updatedElements[index] = { ...updatedElements[index], [field]: value };
-    setShowElements(updatedElements);
-    console.log(showElements, "changing input elements");
-  };
-  const handleAddField = (addfield: any) => {
-    console.log(showElements, "add field");
-    setShowElements([...showElements, addfield]);
-  };
-  const handleRemoveField = (cancelledElement: any) => {
-    const updatedElements = showElements.filter((element) => element !== cancelledElement);
-    setShowElements(updatedElements);
-    console.log(showElements, "remove field");
-  };
-
-  useEffect(() => {
-    setShowElements(transformEarningsArray(showElements));
-  }, [annualctc, showElements, basicpercent]);
-
-  // DEDUCTION CHANGES
-
-  const handleChangedeductions = (index: any, field: any, value: any) => {
-    // Update the state with the modified data
-    const updateddeductions = [...showdeductions];
-    updateddeductions[index] = { ...updateddeductions[index], [field]: value };
-    setShowdeductions(updateddeductions);
-    console.log(showdeductions, "changing deduction input elements");
-  };
-  const handleAdd = (addfield: any) => {
-    setShowdeductions([...showdeductions, addfield]);
-    console.log(showdeductions, " add field deductions ");
-  };
-  const handleRemove = (cancelledElement: any) => {
-    const updateddeductions = showdeductions.filter((element) => element !== cancelledElement);
-    setShowdeductions(updateddeductions);
-    console.log(showdeductions, " remove field deductions ");
-  };
-  useEffect(() => {
-    setShowdeductions(transformDeductionsArray(showdeductions));
-  }, [showdeductions]);
-
-  // fetching deductions and earning
+}
+const Test = () => {
+  const [formdata, setFormdata] = useState("create");
+  const tosubmit = useRef(false);
+  const debouncedSubmit = useCallback(
+    debounce((submitFunction) => submitFunction(), 1000),
+    []
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://10.0.20.133:8000/employee_salary_details/combined_data",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get("http://10.0.20.121:8000/generalsettings", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.status === 200) {
-          setBasicpercent(response.data.earning_types[1].enter_amount_or_percent); // need to cha
-          console.log(
-            Number(response.data.earning_types[1].enter_amount_or_percent),
-            "basic percent 'change api index' "
-          );
-          console.log(response.data, " api data");
-          const transformarray = transformEarningsArray(response.data.earning_types);
-
-          setData(transformEarningsArray(transformarray.slice(2, 4)));
-          console.log(transformEarningsArray(transformarray.slice(2, 4)), " transform api data");
-          setShowElements(transformEarningsArray(editdata?.earnings_type_name)); // Edit elements
-          setBasicpercent(transformarray[1].enter_amount_or_percent);
-          console.log(showElements, "default element");
-          console.log(response.data.pre_tax_deductions, " deduction api data ");
-          console.log(
-            transformDeductionsArray(response.data.pre_tax_deductions),
-            " transform deduction api data "
-          );
-          setDatadeduction(transformDeductionsArray(response.data.pre_tax_deductions));
-          setShowdeductions(transformDeductionsArray(editdata?.pre_tax_name)); // Edit deductions
+          console.log(response.data);
+          initialValues = response.data;
+          setFormdata("edit");
         }
       } catch (error) {
+        // console.error(error);
         console.log("Data not found");
       }
     };
     fetchData();
   }, []);
-  const dataTableData = {
-    columns: [
-      { Header: "SALARY COMPONENTS", accessor: "earning_type_name", width: "20%" },
-      { Header: "CALCULATION TYPE", accessor: "calculation_type", width: "20%" },
-      { Header: "MONTHLY AMOUNT", accessor: "monthly_amount", width: "20%" },
-      { Header: "ANNUAL  AMOUNT", accessor: "annual_amount", width: "20%" },
-      { Header: "ACTION", accessor: "action", width: "20%" },
-    ],
 
-    rows: showElements.map((row, _index) => ({
-      calculation_type: (
-        <div>
-          {row.calculation_type === "% of Basic" || row.calculation_type === "% of CTC" ? (
-            <MDTypography variant="p">
-              <MDInput
-                onChange={(e: { target: { value: any } }) => {
-                  handleChange(_index, "enter_amount_or_percent", e.target.value);
-                  // if (row.calculation_type === "% of Basic") {
-                  //   setBasicpercent(showElements[_index].enter_amount_or_percent);
-                  // }
-                }}
-                sx={{ width: "50px" }}
-                // value={showElements[_index].enter_amount_or_percent}
-                value={showElements[_index].enter_amount_or_percent}
-              />
-            </MDTypography>
-          ) : (
-            <MDTypography variant="caption"> system calculated </MDTypography>
-          )}
-          <MDTypography variant="p"> {row.calculation_type} </MDTypography>
-        </div>
-      ),
-      earning_type_name: <MDTypography variant="p">{row.earning_type_name}</MDTypography>,
-      monthly_amount: (
-        <MDTypography variant="p">
-          {" "}
-          <MDInput
-            sx={{ width: "100px" }}
-            type="number"
-            disabled={
-              row.calculation_type === "% of CTC" || row.calculation_type === "% of Basic"
-                ? true
-                : false
-            }
-            onChange={(e: { target: { value: any } }) => {
-              let monthlyAmount = e.target.value;
+  const { values, handleChange, handleSubmit } = useFormik({
+    initialValues,
+    // validationSchema: validationSchema,
+    enableReinitialize: true,
+    onSubmit: async () => {
+      if (formdata === "create") {
+        handleFormSubmit();
+      } else {
+        handleFormEditSubmit();
+      }
+    },
+  });
+  const handleFormSubmit = async () => {
+    console.log({ ...values }, "submit values");
+    try {
+      let sendData = values;
 
-              handleChange(_index, "monthly_amount", Number(monthlyAmount));
-              // Calculate and update annual amount
-            }}
-            value={showElements[_index].monthly_amount}
-          />
-        </MDTypography>
-      ),
-      annual_amount: (
-        <MDTypography variant="p">
-          <MDInput
-            value={showElements[_index].annual_amount}
-            disabled
-            sx={{ width: "100px" }}
-            p={2}
-          />
-        </MDTypography>
-      ),
-
-      action: (
-        <>
-          {row.calculation_type === "% of CTC" ? (
-            <MDButton>
-              <RemoveCircleOutlineIcon color="disabled" />
-            </MDButton>
-          ) : (
-            <MDButton>
-              <RemoveCircleOutlineIcon onClick={() => handleRemoveField(row)} color="primary" />
-            </MDButton>
-          )}
-        </>
-      ),
-    })),
-  };
-  const deductionData = {
-    columns: [
-      { accessor: "pre_name_slip", width: "20%" },
-      { accessor: "calculation_type", width: "20%" },
-      { accessor: "monthly_amount", width: "20%" },
-      { accessor: "annual_amount", width: "20%" },
-
-      { accessor: "action", width: "20%" },
-    ],
-
-    rows: showdeductions.map((row, _index) => ({
-      pre_name_slip: <MDTypography variant="p">{row.pre_name_slip}</MDTypography>,
-      calculation_type: <MDTypography variant="p"> {row.calculation_type} </MDTypography>,
-      monthly_amount: (
-        <MDTypography variant="p">
-          <MDInput
-            sx={{ width: "100px" }}
-            type="number"
-            onChange={(e: { target: { value: any } }) => {
-              let monthlyAmount = e.target.value;
-
-              handleChangedeductions(_index, "monthly_amount", Number(monthlyAmount));
-              // Calculate and update annual amount
-            }}
-            value={showdeductions[_index].monthly_amount}
-          />
-        </MDTypography>
-      ),
-      annual_amount: (
-        <MDTypography variant="p">
-          <MDInput
-            value={showdeductions[_index].annual_amount}
-            disabled
-            sx={{ width: "100px" }}
-            p={2}
-          />
-        </MDTypography>
-      ),
-      action: (
-        <MDButton>
-          <RemoveCircleOutlineIcon onClick={() => handleRemove(row)} color="primary" />
-        </MDButton>
-      ),
-    })),
-  };
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    function removeAnnualAmount(data: any[]) {
-      return data.map((item: any) => {
-        // Create a copy of the object to avoid modifying the original array
-        const newItem = { ...item };
-
-        // Remove the "annual_amount" property
-        delete newItem.annual_amount;
-        // Converting monthly  amount to string
-        newItem.monthly_amount = Math.round(newItem.monthly_amount);
-        return newItem;
-      });
-    }
-    function fixAmount(data: any[]) {
-      return data.map((item: any) => {
-        // Create a copy of the object to avoid modifying the original array
-        const newItem = { ...item };
-
-        // Remove the "annual_amount" property
-        delete newItem.annual_amount;
-        // Converting monthly  amount to string
-        newItem.monthly_amount = Math.round(newItem.monthly_amount);
-        newItem.enter_amount_or_percent = Number(newItem.monthly_amount);
-        return newItem;
-      });
-    }
-
-    axios
-      .put(
-        "http://10.0.20.133:8000/mg_salary_template/",
-        {
-          old_template_name: editdata.template_name,
-          template_name: template,
-          template_description: description,
-          annual_ctc: annualctc,
-          earnings_type_name: fixAmount(showElements),
-          pre_tax_name: removeAnnualAmount(showdeductions),
-          epf: [],
+      const response = await axios.post("http://10.0.20.121:8000/generalsettings", sendData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
-        message.success("created successfully");
-        if (response.status === 200) {
-          console.log("success");
-        }
-      })
-      .catch((error) => {
-        console.error("Error deleting task:", error);
-        const myError = error as Error;
-        message.error("An unexpected error occurred");
       });
+      if (response.status === 200) {
+        console.log("Created Successfully");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
+  const handleFormEditSubmit = async () => {
+    try {
+      let sendData = values;
+
+      const response = await axios.put(`http://10.0.20.121:8000/generalsettings`, sendData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 200) {
+        console.log("Edited Successfully");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    if (tosubmit.current) {
+      // Trigger handleSubmit whenever form values change
+      debouncedSubmit(() => handleSubmit());
+    } else {
+      // Set tosubmit.current to true to allow the effect to run on subsequent changes
+      tosubmit.current = true;
+    }
+  }, [values, tosubmit.current]);
   return (
-    <form onSubmit={handleSubmit}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={12} mb={2}>
-          <MDTypography variant="h5">Salary Details</MDTypography>
-        </Grid>
-        <Grid item sm={3}>
-          <Card>
-            <Grid p={2}>
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography variant="body2">EARNING</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {data.map((info, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: showElements.some(
-                          (a) => a.earning_type_name === info.earning_type_name
-                        )
-                          ? "none"
-                          : "block",
+    <DashboardLayout>
+      <DashboardNavbar />
+      <form onSubmit={handleSubmit}>
+        <div>
+          <Grid container>
+            <Grid sm={12} py={2}>
+              <MDTypography
+                variant="h5"
+                color="info"
+                px={2}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  borderBottom: "2px solid #3873E8",
+                }}
+              >
+                General Settings
+              </MDTypography>
+            </Grid>
+
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Default Unit/UoM
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
                       }}
                     >
-                      <Grid container>
-                        <Grid item sm={10}>
-                          <Typography variant="overline">{info?.earning_type_name}</Typography>
-                        </Grid>
-                        <Grid item sm={2}>
-                          <MDButton
-                            color="info"
-                            variant="text"
-                            onClick={() => handleAddField(info)}
-                          >
-                            <AddIcon />
-                          </MDButton>
-                        </Grid>
-                      </Grid>
-                    </div>
-                  ))}
-                </AccordionDetails>
-              </Accordion>
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography variant="body2">DEDUCTIONS</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {datadeduction.map((info, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: showdeductions.some((a) => a.pre_name_slip === info.pre_name_slip)
-                          ? "none"
-                          : "block",
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Select default unit of measurement which suits your business most
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} py={2}></Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Inventory Valuation
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
                       }}
                     >
-                      <Grid container>
-                        <Grid item sm={10}>
-                          <Typography variant="overline">{info?.pre_name_slip}</Typography>
-                        </Grid>
-                        <Grid item sm={2}>
-                          <MDButton
-                            color="info"
-                            variant="text"
-                            onClick={() => {
-                              handleAdd(info);
-                            }}
-                          >
-                            <AddIcon />
-                          </MDButton>
-                        </Grid>
-                      </Grid>
-                    </div>
-                  ))}
-                </AccordionDetails>
-              </Accordion>
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Select Inventory valuation method as per your accounting practice
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} py={2}></Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
             </Grid>
-          </Card>
-        </Grid>
-        <Grid item sm={9}>
-          <Card sx={{ borderRadius: 0 }}>
-            <Grid container px={4} pt={2}>
-              <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDTypography variant="h6">Template Name</MDTypography>
-              </Grid>
-              <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDTypography variant="h6">Description</MDTypography>
-              </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper style={{ height: "100%" }}>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Inventory Identifier
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Select type of number used in inventory identification
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} py={2}></Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
             </Grid>
-            <Grid container px={4}>
-              <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  required
-                  onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-                    setTemplate(e.target.value)
-                  }
-                  value={template}
-                />
-              </Grid>
-              <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  required
-                  onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-                    setDescription(e.target.value)
-                  }
-                  value={description}
-                />
-              </Grid>
+
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper style={{ height: "100%" }}>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Secure Access
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Ask for username and password at the startup
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.secure_access}
+                        onChange={handleChange}
+                        name="secure_access"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
             </Grid>
-            <Grid container p={4}>
-              <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDTypography variant="h6">Annual CTC *</MDTypography>
-              </Grid>
-              <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  required
-                  onChange={(e: { target: { value: React.SetStateAction<number> } }) =>
-                    setAnnualctc(e.target.value)
-                  }
-                  value={annualctc}
-                />
-              </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper style={{ height: "100%" }}>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Negative Stock Sale
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Allows you to do billing in case of negative stock
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.negative_stock_sale}
+                        onChange={handleChange}
+                        name="negative_stock_sale"
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
             </Grid>
-            <Grid sx={{ display: "flex", justifyContent: "flex-start" }} p={2}>
-              <MDTypography variant="h6">EARNINGS</MDTypography>
+
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Allows Task Confirmation
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Implement user confirmation for critical actions in the application.
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.allow_task_confirmation}
+                        onChange={handleChange}
+                        name="allow_task_confirmation"
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
             </Grid>
-            <DataTable
-              table={dataTableData}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
-            />
-            {showdeductions.length === 0 ? (
-              ""
-            ) : (
-              <Grid sx={{ display: "flex", justifyContent: "flex-start" }} pl={2}>
-                <MDTypography variant="h6">DEDUCTIONS</MDTypography>
-              </Grid>
-            )}
-            <DataTable
-              table={deductionData}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
-            />
-          </Card>
-        </Grid>
-      </Grid>
-      <Grid container m={4}>
-        <Grid item>
-          <MDButton
-            color="info"
-            variant="contained"
-            type="submit"
-            onClick={() => {
-              handleCloseupdate();
-            }}
-          >
-            Save
-          </MDButton>
-        </Grid>
-        <Grid item ml={2}>
-          <MDButton
-            color="primary"
-            variant="outlined"
-            onClick={() => {
-              handleCloseupdate();
-            }}
-          >
-            Back
-          </MDButton>
-        </Grid>
-      </Grid>
-    </form>
+
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox px={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Enable Manufacturing
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Allows you to create bill of materials and add assembled items in stock
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.enable_manufacturing}
+                        onChange={handleChange}
+                        name="enable_manufacturing"
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox px={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid sm={12}>
+                      {" "}
+                      <MDTypography variant="body2" fontWeight="bold" px={2}>
+                        Price Catalog
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Allows you to add multiple sale prices for the same item
+                      </MDTypography>
+                    </Grid>
+                    <Grid sm={3} p={2}>
+                      <Checkbox
+                        checked={values.price_catalog}
+                        onChange={handleChange}
+                        name="price_catalog"
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+          </Grid>
+        </div>
+      </form>
+    </DashboardLayout>
   );
 };
 
-export default SalaryTemp;
+export default Test;

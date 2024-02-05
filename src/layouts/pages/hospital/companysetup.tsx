@@ -12,21 +12,13 @@ import Grid from "@mui/material/Grid";
 import FormField from "layouts/ecommerce/products/new-product/components/FormField";
 import Autocomplete from "@mui/material/Autocomplete";
 import MDTypography from "components/MDTypography";
-import MDDropzone from "components/MDDropzone";
+
 import { useState, useEffect } from "react";
 import { message } from "antd";
 
 const token = Cookies.get("token");
-//import {ChangeEvent} from "react";
 
-// const validationSchema = yup.object({
-//   username: yup.string().min(2).max(25).required("Please enter your name"),
-
-//   password: yup
-//     .string()
-//     .min(8, "Password should be of minimum 8 characters length")
-//     .required("Password is required"),
-// });
+// console.log(binaryData, "binaryData");
 const states = [
   "Andhra Pradesh",
   "Arunachal Pradesh",
@@ -83,6 +75,9 @@ const Test = () => {
     company_logo: "",
     signature: "",
   });
+  const [imageone, setImageone] = useState(null);
+  const [imagetwo, setImagetwo] = useState(null);
+
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData({
@@ -90,17 +85,34 @@ const Test = () => {
       [name]: value,
     });
   };
-  const handleFileChange = (e: { target: { files: any[] } }) => {
-    setFormData({
-      ...formData,
-      company_logo: e.target.files[0],
-    });
+  const hanleImageOne = (e: { target: { files: any[] } }) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      //  PNG , JPEG, HEIC  images
+      if (file.type === "image/png" || file.type === "image/jpeg" || file.type === "image/heic") {
+        setFormData({
+          ...formData,
+          company_logo: e.target.files[0],
+        });
+      } else {
+        message.error("Please select a valid PNG or JPEG image.");
+      }
+    }
   };
-  const handleFilesChange = (e: { target: { files: any[] } }) => {
-    setFormData({
-      ...formData,
-      signature: e.target.files[0],
-    });
+  const handleImageTwo = (e: { target: { files: any[] } }) => {
+    const file = e.target.files[0];
+    if (file) {
+      //  PNG , JPEG, HEIC  images
+      if (file.type === "image/png" || file.type === "image/jpeg" || file.type === "image/heic") {
+        setFormData({
+          ...formData,
+          signature: e.target.files[0],
+        });
+      } else {
+        message.error("Please select a valid PNG or JPEG  or HEIC image.");
+      }
+    }
   };
   const [formdata, setFormdata] = useState("create");
 
@@ -115,8 +127,14 @@ const Test = () => {
         });
         if (response.status === 200) {
           console.log(response.data);
-          setFormData(response.data[0]);
+
+          setFormData({ ...response.data });
           setFormdata("edit");
+          const binaryData1 = await saveImageAsBinary(formData.company_logo);
+          // const binaryData1 = await saveImageAsBinary(`http://${formData.company_logo}`);
+
+          console.log(binaryData1, "binary data image 1");
+          console.log(formData.company_logo, "binary data image 1");
         }
       } catch (error) {
         // console.error(error);
@@ -126,13 +144,7 @@ const Test = () => {
     fetchData();
   }, []);
 
-  // const handleImage1 = (event: { target: { files: any[] } }) => {
-  //   const file = event.target.files[0];
-  //   setSendData({ ...formData, company_logo: file });
-  // };
-
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
+  const handleFormSubmit = async () => {
     const formDataObj = new FormData();
 
     formDataObj.append("businessname", formData.businessname);
@@ -150,7 +162,12 @@ const Test = () => {
     formDataObj.append("signature", formData.signature);
 
     try {
-      const response = await axios.post("http://10.0.20.121:8000/company", formDataObj);
+      const response = await axios.post("http://10.0.20.121:8000/company", formDataObj, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 200) {
         const data = response.data;
@@ -179,6 +196,117 @@ const Test = () => {
       }
     } catch (error) {
       console.error("Error:");
+    }
+  };
+  const handleFormEditSubmit = async () => {
+    const formDataObj = new FormData();
+
+    formDataObj.append("businessname", formData.businessname);
+    formDataObj.append("address", formData.address);
+    formDataObj.append("city", formData.city);
+    formDataObj.append("state", formData.state);
+    formDataObj.append("pincode", formData.pincode);
+    formDataObj.append("country", formData.country);
+    formDataObj.append("email", formData.email);
+    formDataObj.append("phone", formData.phone);
+    formDataObj.append("pan_no", formData.pan_no);
+    formDataObj.append("gstin", formData.gstin);
+    formDataObj.append("taxation_method", formData.taxation_method);
+    formDataObj.append("company_logo", imageone);
+    formDataObj.append("signature", imageone);
+
+    try {
+      const response = await axios.put("http://10.0.20.121:8000/company", formDataObj, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        console.log(data, "data getting ");
+        message.success("Company created");
+        setFormData({
+          businessname: "",
+          address: "",
+          city: "",
+          state: "",
+          pincode: "",
+          country: "",
+          email: "",
+          phone: "",
+          pan_no: "",
+          gstin: "",
+          taxation_method: "",
+          company_logo: "",
+          signature: "",
+        });
+        // Handle success, show message, redirect, etc.
+      } else {
+        // Handle errors
+        console.error("Error:", response.statusText);
+        message.error("something wrong happened or fill all details ");
+      }
+    } catch (error) {
+      console.error("Error:");
+    }
+  };
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (formdata === "create") {
+      handleFormSubmit();
+    } else {
+      handleFormEditSubmit();
+    }
+  };
+  // Function to fetch and save image as binary data
+  const saveImageAsBinary = async (imageUrl: string): Promise<string | null> => {
+    try {
+      console.log(imageUrl, "imgurl");
+
+      // Fetch the image data from the URL
+      const response = await fetch(imageUrl);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch image");
+      }
+
+      // Read the image data as an array buffer
+      const imageArrayBuffer = await response.arrayBuffer();
+
+      // Convert array buffer to binary blob
+      const imageBlob = new Blob([imageArrayBuffer]);
+      console.log(imageBlob, "imageblob");
+
+      // Create a binary file reader
+      const reader = new FileReader();
+      console.log(reader, "reader");
+
+      // Define a promise to handle file reader load event
+      const loadPromise = new Promise<string>((resolve) => {
+        // Resolve the promise when the file reader has loaded
+        reader.onload = () => {
+          // Binary data of the image
+          const binaryData = reader.result as string;
+          console.log(binaryData, "binaryData");
+          // Resolve the promise with the binary data
+          setImageone(binaryData);
+          resolve(binaryData);
+        };
+      });
+
+      // Read the binary blob as data URL
+      reader.readAsDataURL(imageBlob);
+
+      // Wait for the file reader to load and return the binary data
+      const loadPromises = await loadPromise;
+      console.log(loadPromises, "load the promise ");
+      return loadPromises;
+    } catch (error) {
+      console.error("Error:", (error as Error).message);
+      // If there's an error, you may want to handle it accordingly or return null, etc.
+      return null;
     }
   };
   return (
@@ -314,7 +442,7 @@ const Test = () => {
                     Company Logo
                   </MDTypography>
                   <div>
-                    <MDInput type="file" accept="image/*" onChange={handleFileChange} />
+                    <MDInput type="file" accept="image/*" onChange={hanleImageOne} />
                   </div>
                 </Grid>
                 <Grid sm={12}>
@@ -322,7 +450,7 @@ const Test = () => {
                     Signature
                   </MDTypography>
                   <div>
-                    <MDInput type="file" accept="image/*" onChange={handleFilesChange} />
+                    <MDInput type="file" accept="image/*" onChange={handleImageTwo} />
                   </div>
                   {/* <div className="App">
                     <h2>Add Image:</h2>
